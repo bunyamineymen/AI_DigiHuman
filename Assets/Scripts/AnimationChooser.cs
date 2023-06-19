@@ -27,6 +27,8 @@ public class AnimationChooser : MonoSingleton<AnimationChooser>
     
     public void AddNewAnimation(string name)
     {
+        return;
+
         GameObject newAnimationNode = Instantiate(animationNodePrefab);
         newAnimationNode.GetComponentInChildren<TextMeshProUGUI>().text = name;
         slideShow.AddNode(newAnimationNode);

@@ -1,52 +1,53 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 
 
 public enum BlendShapes : int
 {
-   EyeBlinkLeft,
-   EyeBlinkRight,
-   EyeSquintLeft,
-   EyeSquintRight,
-   EyeWideLeft,
-   EyeWideRight,
-   MouthSmileRight,
-   MouthSmileLeft,
-   MouthDimpleLeft,
-   MouthDimpleRight,
-   MouthFrownRight,
-   MouthFrownLeft,
-   LipLowerDownLeft,
-   LipLowerDownRight,
-   LipUpperUpLeft,
-   LipUpperUpRight,
-   MouthLeft,
-   MouthRight,
-   MouthStretchLeft,
-   MouthStretchRight,
-   MouthLowerDownRight,
-   MouthLowerDownLeft,
-   MouthPressLeft,
-   MouthPressRight,
-   MouthOpen,
-   MouthPucker,
-   MouthShrugUpper,
-   JawOpen,
-   JawLeft,
-   JawRight,
-   BrowDownLeft,
-   BrowOuterUpLeft,
-   BrowDownRight,
-   BrowOuterUpRight,
-   CheekSquintRight,
-   CheekSquintLeft,
-   MouthRollLower,
-   MouthRollUpper,
-   NoseSneerLeft,
-   NoseSneerRight
+    EyeBlinkLeft,
+    EyeBlinkRight,
+    EyeSquintLeft,
+    EyeSquintRight,
+    EyeWideLeft,
+    EyeWideRight,
+    MouthSmileRight,
+    MouthSmileLeft,
+    MouthDimpleLeft,
+    MouthDimpleRight,
+    MouthFrownRight,
+    MouthFrownLeft,
+    LipLowerDownLeft,
+    LipLowerDownRight,
+    LipUpperUpLeft,
+    LipUpperUpRight,
+    MouthLeft,
+    MouthRight,
+    MouthStretchLeft,
+    MouthStretchRight,
+    MouthLowerDownRight,
+    MouthLowerDownLeft,
+    MouthPressLeft,
+    MouthPressRight,
+    MouthOpen,
+    MouthPucker,
+    MouthShrugUpper,
+    JawOpen,
+    JawLeft,
+    JawRight,
+    BrowDownLeft,
+    BrowOuterUpLeft,
+    BrowDownRight,
+    BrowOuterUpRight,
+    CheekSquintRight,
+    CheekSquintLeft,
+    MouthRollLower,
+    MouthRollUpper,
+    NoseSneerLeft,
+    NoseSneerRight
 }//23 nodes for now
 
 [Serializable]
@@ -72,19 +73,19 @@ public class FacialExpressionHandler : MonoBehaviour
 
     [SerializeField] private GameObject character;
     private BlendShapeController BlendShapeController;
+
     // Start is called before the first frame update
     void Start()
     {
-
         Initialization();
-
     }
 
     private void Initialization()
     {
         BlendShapeController = character.GetComponentInChildren<BlendShapeController>();
-        
+
         faceBlendNodes = new FaceBlendData[40];//number of current processable nodes
+
         for (int i = 0; i < faceBlendNodes.Length; i++)
         {
             faceBlendNodes[i] = new FaceBlendData();
@@ -100,13 +101,13 @@ public class FacialExpressionHandler : MonoBehaviour
             };
         }
     }
-    
+
     public void SetCharacter(GameObject character)
     {
         this.character = character;
         Initialization();
     }
-    
+
     public void UpdateData(FaceJson faceJson)
     {
         for (int i = 0; i < faceJson.blendShapes.Length; i++)
@@ -116,57 +117,57 @@ public class FacialExpressionHandler : MonoBehaviour
         // FaceUpdate();
         UpdateFace();
     }
-    
+
     void UpdateFace()
     {
-        
+
         for (int i = 0; i < faceBlendNodes.Length; i++)
         {
             faceBlendNodes[i].weight = faceBlendNodes[i].newWeight;
         }
-        
+
         // Update facial expression
-        BlendShapeController.EyeBlinkLeft.weight = faceBlendNodes[(int) BlendShapes.EyeBlinkLeft].weight;
-        BlendShapeController.EyeBlinkRight.weight = faceBlendNodes[(int) BlendShapes.EyeBlinkRight].weight;
-        BlendShapeController.EyeSquintLeft.weight = faceBlendNodes[(int) BlendShapes.EyeSquintLeft].weight;
-        BlendShapeController.EyeSquintRight.weight = faceBlendNodes[(int) BlendShapes.EyeSquintRight].weight;
-        BlendShapeController.EyeWideLeft.weight = faceBlendNodes[(int) BlendShapes.EyeWideLeft].weight;
-        BlendShapeController.EyeWideRight.weight = faceBlendNodes[(int) BlendShapes.EyeWideRight].weight;
-        BlendShapeController.MouthSmileRight.weight = faceBlendNodes[(int) BlendShapes.MouthSmileRight].weight;
-        BlendShapeController.MouthSmileLeft.weight = faceBlendNodes[(int) BlendShapes.MouthSmileLeft].weight;
-        BlendShapeController.MouthFrownRight.weight = faceBlendNodes[(int) BlendShapes.MouthFrownRight].weight;
-        BlendShapeController.MouthFrownLeft.weight = faceBlendNodes[(int) BlendShapes.MouthFrownLeft].weight;
-        BlendShapeController.LipLowerDownLeft.weight = faceBlendNodes[(int) BlendShapes.LipLowerDownLeft].weight;
-        BlendShapeController.LipLowerDownRight.weight = faceBlendNodes[(int) BlendShapes.LipLowerDownRight].weight;
-        BlendShapeController.LipUpperUpLeft.weight = faceBlendNodes[(int) BlendShapes.LipUpperUpLeft].weight;
-        BlendShapeController.LipUpperUpRight.weight = faceBlendNodes[(int) BlendShapes.LipUpperUpRight].weight;
-        BlendShapeController.MouthLeft.weight = faceBlendNodes[(int) BlendShapes.MouthLeft].weight;
-        BlendShapeController.MouthRight.weight = faceBlendNodes[(int) BlendShapes.MouthRight].weight;
-        BlendShapeController.MouthStretchLeft.weight = faceBlendNodes[(int) BlendShapes.MouthStretchLeft].weight;
-        BlendShapeController.MouthStretchRight.weight = faceBlendNodes[(int) BlendShapes.MouthStretchRight].weight;
-        BlendShapeController.MouthLowerDownRight.weight = faceBlendNodes[(int) BlendShapes.MouthLowerDownRight].weight;
-        BlendShapeController.MouthLowerDownLeft.weight = faceBlendNodes[(int) BlendShapes.MouthLowerDownLeft].weight;
-        BlendShapeController.MouthPressLeft.weight = faceBlendNodes[(int) BlendShapes.MouthPressLeft].weight;
-        BlendShapeController.MouthPressRight.weight = faceBlendNodes[(int) BlendShapes.MouthPressRight].weight;
-        BlendShapeController.MouthOpen.weight = faceBlendNodes[(int) BlendShapes.MouthOpen].weight;
-        BlendShapeController.MouthPucker.weight = faceBlendNodes[(int) BlendShapes.MouthPucker].weight;
-        BlendShapeController.MouthShrugUpper.weight = faceBlendNodes[(int) BlendShapes.MouthShrugUpper].weight;
-        BlendShapeController.JawOpen.weight = faceBlendNodes[(int) BlendShapes.JawOpen].weight;
-        BlendShapeController.JawLeft.weight = faceBlendNodes[(int) BlendShapes.JawLeft].weight;
-        BlendShapeController.JawRight.weight = faceBlendNodes[(int) BlendShapes.JawRight].weight;
-        BlendShapeController.BrowDownLeft.weight = faceBlendNodes[(int) BlendShapes.BrowDownLeft].weight;
-        BlendShapeController.BrowOuterUpLeft.weight = faceBlendNodes[(int) BlendShapes.BrowOuterUpLeft].weight;
-        BlendShapeController.BrowDownRight.weight = faceBlendNodes[(int) BlendShapes.BrowDownRight].weight;
-        BlendShapeController.BrowOuterUpRight.weight = faceBlendNodes[(int) BlendShapes.BrowOuterUpRight].weight;
-        BlendShapeController.CheekSquintRight.weight = faceBlendNodes[(int) BlendShapes.CheekSquintRight].weight;
-        BlendShapeController.CheekSquintLeft.weight = faceBlendNodes[(int) BlendShapes.CheekSquintLeft].weight;
-        BlendShapeController.MouthDimpleLeft.weight = faceBlendNodes[(int) BlendShapes.MouthDimpleLeft].weight;
-        BlendShapeController.MouthDimpleRight.weight = faceBlendNodes[(int) BlendShapes.MouthDimpleRight].weight;
-        BlendShapeController.MouthRollLower.weight = faceBlendNodes[(int) BlendShapes.MouthRollLower].weight;
-        BlendShapeController.MouthRollUpper.weight = faceBlendNodes[(int) BlendShapes.MouthRollUpper].weight;
-        BlendShapeController.NoseSneerLeft.weight = faceBlendNodes[(int) BlendShapes.NoseSneerLeft].weight;
-        BlendShapeController.NoseSneerRight.weight = faceBlendNodes[(int) BlendShapes.NoseSneerRight].weight;
-        
+        BlendShapeController.EyeBlinkLeft.weight = faceBlendNodes[(int)BlendShapes.EyeBlinkLeft].weight;
+        BlendShapeController.EyeBlinkRight.weight = faceBlendNodes[(int)BlendShapes.EyeBlinkRight].weight;
+        BlendShapeController.EyeSquintLeft.weight = faceBlendNodes[(int)BlendShapes.EyeSquintLeft].weight;
+        BlendShapeController.EyeSquintRight.weight = faceBlendNodes[(int)BlendShapes.EyeSquintRight].weight;
+        BlendShapeController.EyeWideLeft.weight = faceBlendNodes[(int)BlendShapes.EyeWideLeft].weight;
+        BlendShapeController.EyeWideRight.weight = faceBlendNodes[(int)BlendShapes.EyeWideRight].weight;
+        BlendShapeController.MouthSmileRight.weight = faceBlendNodes[(int)BlendShapes.MouthSmileRight].weight;
+        BlendShapeController.MouthSmileLeft.weight = faceBlendNodes[(int)BlendShapes.MouthSmileLeft].weight;
+        BlendShapeController.MouthFrownRight.weight = faceBlendNodes[(int)BlendShapes.MouthFrownRight].weight;
+        BlendShapeController.MouthFrownLeft.weight = faceBlendNodes[(int)BlendShapes.MouthFrownLeft].weight;
+        BlendShapeController.LipLowerDownLeft.weight = faceBlendNodes[(int)BlendShapes.LipLowerDownLeft].weight;
+        BlendShapeController.LipLowerDownRight.weight = faceBlendNodes[(int)BlendShapes.LipLowerDownRight].weight;
+        BlendShapeController.LipUpperUpLeft.weight = faceBlendNodes[(int)BlendShapes.LipUpperUpLeft].weight;
+        BlendShapeController.LipUpperUpRight.weight = faceBlendNodes[(int)BlendShapes.LipUpperUpRight].weight;
+        BlendShapeController.MouthLeft.weight = faceBlendNodes[(int)BlendShapes.MouthLeft].weight;
+        BlendShapeController.MouthRight.weight = faceBlendNodes[(int)BlendShapes.MouthRight].weight;
+        BlendShapeController.MouthStretchLeft.weight = faceBlendNodes[(int)BlendShapes.MouthStretchLeft].weight;
+        BlendShapeController.MouthStretchRight.weight = faceBlendNodes[(int)BlendShapes.MouthStretchRight].weight;
+        BlendShapeController.MouthLowerDownRight.weight = faceBlendNodes[(int)BlendShapes.MouthLowerDownRight].weight;
+        BlendShapeController.MouthLowerDownLeft.weight = faceBlendNodes[(int)BlendShapes.MouthLowerDownLeft].weight;
+        BlendShapeController.MouthPressLeft.weight = faceBlendNodes[(int)BlendShapes.MouthPressLeft].weight;
+        BlendShapeController.MouthPressRight.weight = faceBlendNodes[(int)BlendShapes.MouthPressRight].weight;
+        BlendShapeController.MouthOpen.weight = faceBlendNodes[(int)BlendShapes.MouthOpen].weight;
+        BlendShapeController.MouthPucker.weight = faceBlendNodes[(int)BlendShapes.MouthPucker].weight;
+        BlendShapeController.MouthShrugUpper.weight = faceBlendNodes[(int)BlendShapes.MouthShrugUpper].weight;
+        BlendShapeController.JawOpen.weight = faceBlendNodes[(int)BlendShapes.JawOpen].weight;
+        BlendShapeController.JawLeft.weight = faceBlendNodes[(int)BlendShapes.JawLeft].weight;
+        BlendShapeController.JawRight.weight = faceBlendNodes[(int)BlendShapes.JawRight].weight;
+        BlendShapeController.BrowDownLeft.weight = faceBlendNodes[(int)BlendShapes.BrowDownLeft].weight;
+        BlendShapeController.BrowOuterUpLeft.weight = faceBlendNodes[(int)BlendShapes.BrowOuterUpLeft].weight;
+        BlendShapeController.BrowDownRight.weight = faceBlendNodes[(int)BlendShapes.BrowDownRight].weight;
+        BlendShapeController.BrowOuterUpRight.weight = faceBlendNodes[(int)BlendShapes.BrowOuterUpRight].weight;
+        BlendShapeController.CheekSquintRight.weight = faceBlendNodes[(int)BlendShapes.CheekSquintRight].weight;
+        BlendShapeController.CheekSquintLeft.weight = faceBlendNodes[(int)BlendShapes.CheekSquintLeft].weight;
+        BlendShapeController.MouthDimpleLeft.weight = faceBlendNodes[(int)BlendShapes.MouthDimpleLeft].weight;
+        BlendShapeController.MouthDimpleRight.weight = faceBlendNodes[(int)BlendShapes.MouthDimpleRight].weight;
+        BlendShapeController.MouthRollLower.weight = faceBlendNodes[(int)BlendShapes.MouthRollLower].weight;
+        BlendShapeController.MouthRollUpper.weight = faceBlendNodes[(int)BlendShapes.MouthRollUpper].weight;
+        BlendShapeController.NoseSneerLeft.weight = faceBlendNodes[(int)BlendShapes.NoseSneerLeft].weight;
+        BlendShapeController.NoseSneerRight.weight = faceBlendNodes[(int)BlendShapes.NoseSneerRight].weight;
+
         BlendShapeController.UpdateBlendShape();
     }
 }
@@ -206,25 +207,25 @@ public class ControlObject
         // Incomplete derivative PD control
         // Control Law ==================================================
         e = x_d - x; // Update error
-        de = (e - e_1)/T; // Compute the derivative of error
-        p_out = KP*e;
-        d_out = (1-ALPHA)*KD*de + ALPHA*d_out_1;
-        
-        switch(mode)
+        de = (e - e_1) / T; // Compute the derivative of error
+        p_out = KP * e;
+        d_out = (1 - ALPHA) * KD * de + ALPHA * d_out_1;
+
+        switch (mode)
         {
             case 1:
                 F = p_out + d_out; // Update control force
                 break;
 
             case 2: // Many bugs !!!!!!!!
-                if(X_D < THRESH && x > THRESH)
+                if (X_D < THRESH && x > THRESH)
                 {
                     isBlinking = true;
                     F = -1;
                 }
-                else if(isBlinking == true)
+                else if (isBlinking == true)
                 {
-                    if(x>0.001f)
+                    if (x > 0.001f)
                     {
                         isBlinking = true;
                         F = -1;
@@ -244,20 +245,20 @@ public class ControlObject
                 break;
 
         }
-        
+
 
         e_1 = e;// Update last error
         d_out_1 = d_out; // Update last derivative term
 
         // System Law ==================================================
-        a = F/M; // Update acceleration
-        v = v + a*T; // Update velocity
-        x = x + v*T; // Update position
-        if(x<0)
+        a = F / M; // Update acceleration
+        v = v + a * T; // Update velocity
+        x = x + v * T; // Update position
+        if (x < 0)
         {
             x = 0;
         }
-        
+
         return x;
     }
 }
@@ -268,12 +269,12 @@ class KalmanObject
     public float X = 0;
     public float P = 0.1f;
 
-    public float kalman_filter(float input,float Q,float R)
+    public float kalman_filter(float input, float Q, float R)
     {
         K = P / (P + R);
         X = X + K * (input - X);
         P = P - K * P + Q;
         return X;
     }
-    
+
 }
