@@ -497,18 +497,26 @@ public class Pose3DMapper : CharacterMapper
         Vector3 r_knee = bodyPartVectors[(int)BodyPoints.RightKnee].position;
 
         JointPoint r_ankleT = jointPoints[(int)BodyPoints.RightAnkle];
-        r_ankleT.Transform.rotation =
-            Quaternion.LookRotation(r_ankle - r_toe, r_knee - r_ankle)
-            * r_ankleT.InverseRotation;
+
+
+        //r_ankleT.Transform.rotation =
+        //    Quaternion.LookRotation(r_ankle - r_toe, r_knee - r_ankle)
+        //    * r_ankleT.InverseRotation;
+
+
+
 
         Vector3 l_ankle = bodyPartVectors[(int)BodyPoints.LeftAnkle].position;
         Vector3 l_toe = bodyPartVectors[(int)BodyPoints.LeftFootIndex].position;
         Vector3 l_knee = bodyPartVectors[(int)BodyPoints.LeftKnee].position;
 
         JointPoint l_ankleT = jointPoints[(int)BodyPoints.LeftAnkle];
-        l_ankleT.Transform.rotation =
-            Quaternion.LookRotation(l_ankle - l_toe, l_knee - l_ankle)
-            * l_ankleT.InverseRotation;
+
+        //l_ankleT.Transform.rotation =
+        //    Quaternion.LookRotation(l_ankle - l_toe, l_knee - l_ankle)
+        //    * l_ankleT.InverseRotation;
+
+
 
 
         // for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
