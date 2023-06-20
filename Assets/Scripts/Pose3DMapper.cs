@@ -429,13 +429,13 @@ public class Pose3DMapper : CharacterMapper
 
         var _rotation = Quaternion.LookRotation(plane.normal, faceUpDir);
 
-        Debug.Log($"_rotation x {_rotation.x * Mathf.Rad2Deg}");
-        Debug.Log($"_rotation z {_rotation.z * Mathf.Rad2Deg}");
+        //Debug.Log($"_rotation x {_rotation.x * Mathf.Rad2Deg}");
+        //Debug.Log($"_rotation z {_rotation.z * Mathf.Rad2Deg}");
 
         var xValue = (_rotation.x * Mathf.Rad2Deg - 4.5f) * 5f + 20f;
         var zValue = (_rotation.x * Mathf.Rad2Deg - 11f) * 3f + 10f;
 
-        head.Transform.localRotation = Quaternion.Euler(xValue, 0f, zValue);
+        //head.Transform.localRotation = Quaternion.Euler(xValue, 0f, zValue);
 
 
 

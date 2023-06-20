@@ -4747,7 +4747,7 @@ MonoBehaviour:
   fractionY: 1
   fractionZ: -0.8
   enableVideoAspectRatioEffector: 1
-  nextFrameTime: 0.00833
+  nextFrameTime: 0.000833
   currentPoseJson:
     predictions: []
     width: 0
@@ -11193,7 +11193,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -12.998596, y: 50}
+  m_AnchoredPosition: {x: -12.998535, y: 50}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1590560530
@@ -12646,7 +12646,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 34
+  field of view: 47.6
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
