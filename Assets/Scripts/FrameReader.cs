@@ -484,8 +484,8 @@ public class FrameReader : MonoBehaviour
 
                 var predictions = currentFrameData.poseData.predictions;
 
-                Debug.Log($"predictions: {predictions.Length}");
-                Debug.Log($"predictions: {predictions[0].position}");
+                //Debug.Log($"predictions: {predictions.Length}");
+                //Debug.Log($"predictions: {predictions[0].position}");
 
                 bodyIndex++;
             }
