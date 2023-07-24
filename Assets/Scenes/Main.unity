@@ -13252,7 +13252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 1294764057}
   debugMode: 0
-  debugGameObject: {fileID: 0}
+  debugGameObject: {fileID: 2462339299739086848, guid: afc8462f510ddf44db097993810439f7, type: 3}
   enableKalmanFilter: 1
   KalmanParamQ: 0.001
   KalmanParamR: 0.0015
@@ -13347,7 +13347,7 @@ MonoBehaviour:
     time: 0
   faceIndex: 0
   character: {fileID: 1294764057}
-  enableFace: 1
+  enableFace: 0
   enableHands: 1
   pause: 1
   slider: {fileID: 1986810590}
@@ -13402,7 +13402,7 @@ MonoBehaviour:
   useLowPassFilter: 1
   lowPassParam: 0.1
   lowPassFilterChannels: 70
-  enableAnomalyDetector: 0
+  enableAnomalyDetector: 1
   handAnomalyDetector: {fileID: 1295087775}
   flipHands: 0
 --- !u!114 &620901069
@@ -14211,7 +14211,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!328 &670222376
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -14237,7 +14237,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
-  m_Url: file://C:/Users/bny/Desktop/bny.mp4
+  m_Url: file://C:/Users/bny/Desktop/Desktop_BSL/media/orig2.avi
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -30160,7 +30160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -12.999939, y: 50}
+  m_AnchoredPosition: {x: -13.000183, y: 50}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1568549160

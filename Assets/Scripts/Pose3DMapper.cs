@@ -115,7 +115,7 @@ public class Pose3DMapper : CharacterMapper
             jointsDebug = new GameObject[33];
             for (int i = 0; i < jointsDebug.Length; i++)
             {
-                //jointsDebug[i] = Instantiate(debugGameObject);
+                jointsDebug[i] = Instantiate(debugGameObject);
             }
         }
 
@@ -305,20 +305,20 @@ public class Pose3DMapper : CharacterMapper
             }
 
             if (bodyPartVectors[i].visibility > 0.2f)
+            {
                 jointPoints[i].LandmarkPose = bodyPartVectors[i].position;
+            }
         }
 
-        //setting position of each bone
-        // jointPoints[(int) BodyPoints.Spine].Transform.position = bodyPartVectors[(int) BodyPoints.Spine].position;
-
-        jointPoints[(int)BodyPoints.Hips].Transform.position = bodyPartVectors[(int)BodyPoints.Hips].position;
-
+        //transfer position metrics
         for (int i = 0; i < jointPoints.Length && i < bodyPartVectors.Length; i++)
         {
             JointPoint bone = jointPoints[i];
 
             if (bone.Transform != null)
+            {
                 bone.WorldPos = bone.Transform.position;
+            }
         }
 
 
@@ -333,32 +333,23 @@ public class Pose3DMapper : CharacterMapper
                 {
                     JointPoint child = bone.Child;
                     float distance = bone.DistanceFromChild;
+
                     Vector3 direction = (-bone.LandmarkPose + child.LandmarkPose) / (-bone.LandmarkPose + child.LandmarkPose).magnitude;
                     child.WorldPos = bone.Transform.position + direction * distance;
-                    // child.Transform.position = child.WorldPos;
-                    //                    Debug.Log(distance + "  " + Vector3.Distance(child.Transform.position,bone.Transform.position));
                 }
-            }
-            else
-            {
-                // if(i == (int) BodyPoints.RightShoulder || i == (int) BodyPoints.LeftShoulder || 
-                //    i == (int) BodyPoints.LeftHip || i== (int) BodyPoints.RightHip || i == (int) BodyPoints.Head || i== (int) BodyPoints.Neck)
-                //     continue;
-                // if (jointPoints[i].Transform != null)
-                // {
-                //     if(bodyPartVectors[i].visibility > 0.75f)
-                //         jointPoints[i].Transform.position = bodyPartVectors[i].position;
-                // }
             }
         }
 
 
+
         if (enableKalmanFilter)
+        {
             for (int i = 0; i < jointPoints.Length; i++)
             {
                 if (jointPoints[i].Transform != null)
                     KalmanUpdate(jointPoints[i]);
             }
+        }
         else
         {
             for (int i = 0; i < jointPoints.Length; i++)
@@ -379,6 +370,8 @@ public class Pose3DMapper : CharacterMapper
                 jp.FilteredPos = jp.LastPoses[jp.LastPoses.Length - 1];
             }
         }
+
+        //Rotation
 
 
         //setting hip & spine rotation
@@ -642,6 +635,7 @@ public class Pose3DMapper : CharacterMapper
             return;
         if (bodyPartVectors.Length == 0)
             return;
+
         if (debugMode)
         {
             for (int i = 0; i < bodyPartVectors.Length; i++)
@@ -668,8 +662,17 @@ public class Pose3DMapper : CharacterMapper
         }
         catch (Exception e)
         {
-            Debug.LogError("Pose problem");
-            throw e;
+            //Debug.LogError("Pose problem");
+            //throw e;
         }
     }
 }
+
+
+
+
+
+
+//setting position of each bone
+//jointPoints[(int)BodyPoints.Spine].Transform.position = bodyPartVectors[(int)BodyPoints.Spine].position;
+//jointPoints[(int)BodyPoints.Hips].Transform.position = bodyPartVectors[(int)BodyPoints.Hips].position;

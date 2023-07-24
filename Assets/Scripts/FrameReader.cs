@@ -189,12 +189,12 @@ public class FrameReader : MonoBehaviour
 
         if (timer >= nextFrameTime)
         {
-            //if (debug)
-            //{
-            //    videoPlayer.frame = frameData[currentAnimationSlot].frame;
-            //    videoPlayer.Play();
-            //    videoPlayer.Pause();
-            //}
+            if (debug)
+            {
+                videoPlayer.frame = frameData[currentAnimationSlot].frame;
+                videoPlayer.Play();
+                videoPlayer.Pause();
+            }
 
             timer = 0;
             currentAnimationSlot++;
@@ -258,7 +258,7 @@ public class FrameReader : MonoBehaviour
                 handPose.Predict3DPose(currentHandJsonVector);
             }
 
-            //----- Facial Mocap -------
+            //-----Facial Mocap------ -
             if (currentFaceJson != null && enableFace)
             {
                 facialExpressionHandler.UpdateData(currentFaceJson);
