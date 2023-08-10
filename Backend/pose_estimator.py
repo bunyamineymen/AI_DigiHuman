@@ -351,23 +351,29 @@ def Hands_Full(video_path,debug=False):
               break
     cap.release()
 
-
+#region bny
+"""
 def Complete_pose_Video(video_path,debug=False):
+    
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
     mp_holistic = mp.solutions.holistic
     mp_hands = mp.solutions.hands
-    json_path = "TestPath"
+    
     cap = cv2.VideoCapture(video_path)
-    # cap = cv2.VideoCapture(0)
+    
     with mp_holistic.Holistic(
         min_detection_confidence=0.5,
         min_tracking_confidence=0.8,
         model_complexity=2) as holistic:
       while cap.isOpened():
         success, image = cap.read()
+        
         # current_frame
         frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        
+        print(f"frame: {frame}")
+
         if not success:
           break
 
@@ -378,6 +384,7 @@ def Complete_pose_Video(video_path,debug=False):
         results = holistic.process(image)
 
         # ---- Body pose ----
+        
         rows, cols, _ = image.shape
         try:
             pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks)  # also can use results.pose_landmarks
@@ -397,7 +404,9 @@ def Complete_pose_Video(video_path,debug=False):
                 'height': rows,
                 'width': cols
             }
+            
         # ---- Hands ----
+        
         hands_array_R = []
         hands_array_L = []
         if results.left_hand_landmarks:
@@ -409,6 +418,7 @@ def Complete_pose_Video(video_path,debug=False):
             'handsL': hands_array_L,
             'frame': frame
         }
+
 
         # ---- Face ----
 
@@ -422,14 +432,18 @@ def Complete_pose_Video(video_path,debug=False):
         #     'frame': frame
         #     }
 
+
         json_data = {
             'bodyPose': body_pose,
             'handsPose': hands_pose,
             'frame': frame
         }
+        
         # print(json_data)
         yield json_data
 
+
+        
         if debug:
             # Draw landmark annotation on the image.
             image.flags.writeable = True
@@ -459,7 +473,112 @@ def Complete_pose_Video(video_path,debug=False):
             cv2.imshow('MediaPipe Holistic', cv2.flip(image, 1))
             if cv2.waitKey(5) & 0xFF == 27:
               break
+        
+         
+          
     cap.release()
+    """
+#endregion
+
+
+
+def Complete_pose_Video(video_path, debug=False):
+    # Gerekli kütüphaneler ve modüller yüklenir
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_holistic = mp.solutions.holistic
+    mp_hands = mp.solutions.hands
+    
+    # Video dosyası okuma başlatılır
+    cap = cv2.VideoCapture(video_path)
+    
+    # MediaPipe Holistic modeli başlatılır
+    with mp_holistic.Holistic(
+        min_detection_confidence=0.7,
+        min_tracking_confidence=0.7,
+        model_complexity=1) as holistic:
+      while cap.isOpened():
+        # Bir sonraki kareyi yakalamaya çalışır
+        success, image = cap.read()
+        
+        # Şu anki kare numarası alınır
+        frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        
+        # Anlık kare numarası ekrana yazdırılır
+        print(f"frame: {frame}")
+
+        # Kamera başarılı bir şekilde çalışmıyorsa döngüden çıkılır
+        if not success:
+          break
+
+        # Görüntüyü işlemeye uygun hale getirir
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        results = holistic.process(image)
+
+        # ---- Vücut poz tahmini ----
+        
+        rows, cols, _ = image.shape
+        try:
+            # Elde edilen vücut poz verileri düzenlenir ve kaydedilir
+            pose_landmarks = landmarks_list_to_array(results.pose_world_landmarks)
+            add_extra_points(pose_landmarks)
+            body_pose = {
+                'predictions': pose_landmarks,
+                'frame': frame,
+                'height': rows,
+                'width': cols
+            }
+        except:
+            # Eğer vücut poz verisi alınamazsa boş bir veri kaydedilir
+            body_pose = {
+                'predictions': [],
+                'frame': frame,
+                'height': rows,
+                'width': cols
+            }
+            
+        # ---- Eller ----
+        
+        hands_array_R = []
+        hands_array_L = []
+        # Sol el ve sağ el verileri alınır
+        if results.left_hand_landmarks:
+            hands_array_L = landmarks_list_to_array(results.left_hand_landmarks)
+        if results.right_hand_landmarks:
+            hands_array_R = landmarks_list_to_array(results.right_hand_landmarks)
+        hands_pose = {
+            'handsR': hands_array_R,
+            'handsL': hands_array_L,
+            'frame': frame
+        }
+
+        # ---- Yüz (Yorum satırları kısmen kaldırılmış) ----
+        
+        # facial_expression = mocap.get_frame_facial_mocap(image, frame)
+        # if facial_expression is None:
+        #     facial_expression = {
+        #     'leftEyeWid': -1,
+        #     'rightEyeWid': -1,
+        #     'mouthWid': -1,
+        #     'mouthLen': -1,
+        #     'frame': frame
+        #     }
+
+        # Oluşan veriler JSON formatında düzenlenir
+        json_data = {
+            'bodyPose': body_pose,
+            'handsPose': hands_pose,
+            'frame': frame
+        }
+        
+        # JSON verileri döndürülür
+        yield json_data
+          
+    # Video işleme tamamlandığında, kamera serbest bırakılır
+    cap.release()
+
+
 
 
 #add_extra_points([])

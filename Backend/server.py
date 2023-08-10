@@ -148,6 +148,8 @@ def calculate_video_hand_pose_estimation(file_name):
     hand_pose_video_data_statues[file_name] = True #means process is finished
     # return pose_estimator.Pose_Video(file_name)
 
+
+
 # filename = path to video, json_array_len= how many frames data should be sent per request
 def calculate_video_full_pose_estimation(file_name):
     print()
@@ -155,12 +157,13 @@ def calculate_video_full_pose_estimation(file_name):
     global full_pose_video_data_statues
 
     json_data = []
-    # print("wtf")
+    
+    print("wtf")
+    
     for i in pose_estimator.Complete_pose_Video(file_name):
         full_pose_video_data[file_name].append(i)
+        
     full_pose_video_data_statues[file_name] = True #means process is finished
-    # return pose_estimator.Pose_Video(file_name)
-
 
 
 
@@ -381,8 +384,8 @@ def upload_hand_video():
                 return "Oops!"
         return 'file uploaded successfully'
 
-
-
+#region
+""""
 # processing received file
 @app.route('/holisticUploader', methods=['GET', 'POST'])
 def upload_holistic_video():
@@ -422,6 +425,95 @@ def upload_holistic_video():
                 print("Wrong input!")
                 return "Oops!"
         return 'file uploaded successfully'
+"""
+#endregion
+
+
+# processing received file
+# Alınan dosyanın işlenmesi
+
+@app.route('/holisticUploader', methods=['GET', 'POST'])
+# "/holisticUploader" yoluna gelen GET ve POST isteklerini işleyen bir rota tanımı
+
+def upload_holistic_video():
+    # "upload_holistic_video" adlı bir işlev başlatılıyor
+
+    if request.method == 'POST':
+        # Eğer gelen istek POST metodunda ise devam et
+
+        f = request.files['file']
+        # İstekten "file" adlı dosya verisini al
+
+        postfix = f.filename.split(".")[-1]
+        # Dosya adından nokta ile ayrılmış son bölümü, yani uzantıyı al
+
+        file_name = TEMP_FILE_FOLDER + str(uuid.uuid4()) + "." + postfix
+        # Geçici dosya yolu oluştur: TEMP_FILE_FOLDER + rastgele UUID + dosya uzantısı
+
+        f.save(file_name)
+        # Yüklenen dosyayı oluşturulan dosya yoluna kaydet
+
+        # checking file type
+        # Dosya türünü kontrol etme başlıyor
+
+        mimestart = mimetypes.guess_type(file_name)[0]
+        # MIME türünü tahmin et (örneğin: "video/mp4"), sadece türü al
+
+        if mimestart != None:
+            # Eğer MIME türü belirlenmişse devam et
+
+            mimestart = mimestart.split('/')[0]
+            # MIME türünün yalnızca temel tür kısmını al (örneğin: "video")
+
+            if mimestart in ['video']:
+                # Eğer dosya türü "video" ise devam et
+
+                global hand_pose_video_data
+                global hand_pose_video_data_statues
+                # Global değişkenlere erişim sağla
+
+                full_pose_video_data[file_name] = []
+                full_pose_video_data_statues[file_name] = False
+                # Video verileri ve istatistikler için gerekli boş veri yapılarını oluştur
+
+                thread2 = Thread(target=calculate_video_full_pose_estimation,args=(file_name,))
+                thread2.start()
+                # "calculate_video_full_pose_estimation" işlevini yeni bir iş parçasında çalıştır
+
+                print("video type")
+                # Konsola "video type" yazdır
+
+                cap = cv2.VideoCapture(file_name)
+                
+                tframe = cap.get(cv2.CAP_PROP_FRAME_COUNT)  # get total frame count
+                width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
+                height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+                
+                print("tframe")
+                
+                aspectRatio = width / height
+                
+                cap.release()
+                # Yüklenen videonun bazı özelliklerini al (çerçeve sayısı, en-boy oranı)
+
+                res = {
+                    'file' : file_name,
+                    'totalFrames': int(tframe),
+                    'aspectRatio': aspectRatio
+                }
+                # Yanıt nesnesini oluştur (dosya adı, çerçeve sayısı, en-boy oranı)
+
+                return jsonify(res)
+                # Yanıt nesnesini JSON formatında döndür
+
+            else:
+                print("Wrong input!")
+                # Dosya türü "video" değilse konsola "Wrong input!" yazdır
+                return "Oops!"
+                # İşlemi sonlandır ve "Oops!" metnini döndür
+
+        return 'file uploaded successfully'
+        # Dosya türü kontrolü yapılmadan direkt olarak "file uploaded successfully" yanıtını döndür
 
 
 

@@ -5870,8 +5870,8 @@ MonoBehaviour:
   serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
-  enableDebug: 0
-  filePath: C:/Danial/Projects/Danial/DigiHuman/Assets/video/Action_with_wiper_Trim.mp4
+  enableDebug: 1
+  filePath: C:/Users/bny/Desktop/BSLVideos/orig2.avi
 --- !u!4 &203192803
 Transform:
   m_ObjectHideFlags: 0
@@ -26261,6 +26261,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3495327009958191817, guid: 99f820a4415b54b4a8a9b43d07751c77, type: 3}
+      propertyPath: m_UpdateMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3495327009958191817, guid: 99f820a4415b54b4a8a9b43d07751c77, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3966365157784575550, guid: 99f820a4415b54b4a8a9b43d07751c77, type: 3}
       propertyPath: m_RootOrder
       value: 12
