@@ -126,7 +126,7 @@ public class FrameReader : MonoBehaviour
 
         if (!pause)
         {
-            timer += Time.fixedDeltaTime * 1f;
+            timer += Time.fixedDeltaTime;
         }
 
         currentAnimationSlot = (int)slider.value;

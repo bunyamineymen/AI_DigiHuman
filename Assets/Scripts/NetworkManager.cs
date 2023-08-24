@@ -65,6 +65,8 @@ public class NetworkManager : MonoSingleton<NetworkManager>
         //filePath = "C:/Users/bny/Desktop/BSLVideos/orig2Project_0_3.mp4";
         filePath = "C:/Users/bny/Desktop/BSLVideos/orig2Project_0_5.mp4";
 
+        //filePath = "C:/Users/bny/Desktop/orig__0_5.mp4";
+
         if (enableDebug)
         {
             StartCoroutine(Upload(filePath, serverFullPoseUploadURL, (response, bytes) =>

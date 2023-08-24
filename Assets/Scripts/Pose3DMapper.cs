@@ -167,18 +167,18 @@ public class Pose3DMapper : CharacterMapper
 
 
         // Right Leg
-        jointPoints[(int)BodyPoints.RightHip].Child = jointPoints[(int)BodyPoints.RightKnee];
-        jointPoints[(int)BodyPoints.RightKnee].Child = jointPoints[(int)BodyPoints.RightAnkle];
-        jointPoints[(int)BodyPoints.RightAnkle].Child = jointPoints[(int)BodyPoints.RightFootIndex];
-        // jointPoints[(int) BodyPoints.RightKnee].Parent = jointPoints[(int) BodyPoints.RightHip];
-        jointPoints[(int)BodyPoints.RightAnkle].Parent = jointPoints[(int)BodyPoints.RightKnee];
+        //jointPoints[(int)BodyPoints.RightHip].Child = jointPoints[(int)BodyPoints.RightKnee];
+        //jointPoints[(int)BodyPoints.RightKnee].Child = jointPoints[(int)BodyPoints.RightAnkle];
+        //jointPoints[(int)BodyPoints.RightAnkle].Child = jointPoints[(int)BodyPoints.RightFootIndex];
+        //// jointPoints[(int) BodyPoints.RightKnee].Parent = jointPoints[(int) BodyPoints.RightHip];
+        //jointPoints[(int)BodyPoints.RightAnkle].Parent = jointPoints[(int)BodyPoints.RightKnee];
 
-        // Left Leg
-        jointPoints[(int)BodyPoints.LeftHip].Child = jointPoints[(int)BodyPoints.LeftKnee];
-        jointPoints[(int)BodyPoints.LeftKnee].Child = jointPoints[(int)BodyPoints.LeftAnkle];
-        jointPoints[(int)BodyPoints.LeftAnkle].Child = jointPoints[(int)BodyPoints.LeftFootIndex];
-        // jointPoints[(int) BodyPoints.LeftKnee].Parent = jointPoints[(int) BodyPoints.LeftHip];
-        jointPoints[(int)BodyPoints.LeftAnkle].Parent = jointPoints[(int)BodyPoints.LeftKnee];
+        //// Left Leg
+        //jointPoints[(int)BodyPoints.LeftHip].Child = jointPoints[(int)BodyPoints.LeftKnee];
+        //jointPoints[(int)BodyPoints.LeftKnee].Child = jointPoints[(int)BodyPoints.LeftAnkle];
+        //jointPoints[(int)BodyPoints.LeftAnkle].Child = jointPoints[(int)BodyPoints.LeftFootIndex];
+        //// jointPoints[(int) BodyPoints.LeftKnee].Parent = jointPoints[(int) BodyPoints.LeftHip];
+        //jointPoints[(int)BodyPoints.LeftAnkle].Parent = jointPoints[(int)BodyPoints.LeftKnee];
 
 
         // etc
@@ -227,19 +227,19 @@ public class Pose3DMapper : CharacterMapper
 
 
         //Hip and Spine
-        var hip = jointPoints[(int)BodyPoints.Hips];
-        var spine = jointPoints[(int)BodyPoints.Spine];
-        hip.Inverse = Quaternion.Inverse(Quaternion.LookRotation(forward, spine.Transform.position - hip.Transform.position));
-        hip.InverseRotation = hip.Inverse * hip.InitRotation;
+        //var hip = jointPoints[(int)BodyPoints.Hips];
+        //var spine = jointPoints[(int)BodyPoints.Spine];
+        //hip.Inverse = Quaternion.Inverse(Quaternion.LookRotation(forward, spine.Transform.position - hip.Transform.position));
+        //hip.InverseRotation = hip.Inverse * hip.InitRotation;
 
-        if (spine.Transform != null)
-        {
-            spine.Inverse = Quaternion.Inverse(Quaternion.LookRotation(
-                spine.Transform.position.TriangleNormal(jointPoints[(int)BodyPoints.RightShoulder].Transform.position,
-                    jointPoints[(int)BodyPoints.LeftShoulder].Transform.position),
-                jointPoints[(int)BodyPoints.Neck].Transform.position - spine.Transform.position));
-            spine.InverseRotation = spine.Inverse * spine.InitRotation;
-        }
+        //if (spine.Transform != null)
+        //{
+        //    spine.Inverse = Quaternion.Inverse(Quaternion.LookRotation(
+        //        spine.Transform.position.TriangleNormal(jointPoints[(int)BodyPoints.RightShoulder].Transform.position,
+        //            jointPoints[(int)BodyPoints.LeftShoulder].Transform.position),
+        //        jointPoints[(int)BodyPoints.Neck].Transform.position - spine.Transform.position));
+        //    spine.InverseRotation = spine.Inverse * spine.InitRotation;
+        //}
 
         // For Head Rotation
         var head = jointPoints[(int)BodyPoints.Head];
