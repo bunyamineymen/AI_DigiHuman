@@ -59,6 +59,12 @@ public class NetworkManager : MonoSingleton<NetworkManager>
 
     private void Start()
     {
+
+        //filePath = "C:/Users/bny/Desktop/BSLVideos/orig2.avi";
+        //filePath = "C:/Users/bny/Desktop/BSLVideos/orig2Project_0_1.mp4";
+        //filePath = "C:/Users/bny/Desktop/BSLVideos/orig2Project_0_3.mp4";
+        filePath = "C:/Users/bny/Desktop/BSLVideos/orig2Project_0_5.mp4";
+
         if (enableDebug)
         {
             StartCoroutine(Upload(filePath, serverFullPoseUploadURL, (response, bytes) =>
@@ -442,7 +448,7 @@ public class NetworkManager : MonoSingleton<NetworkManager>
                     FullPoseJson receivedJson = JsonUtility.FromJson<FullPoseJson>(webRequest.downloadHandler.text);
                     bodyJsons.Add(receivedJson.bodyPose);
                     handJsons.Add(receivedJson.handsPose);
-                    Debug.Log(JsonUtility.FromJson<HandJson>(webRequest.downloadHandler.text).frame);
+                    //Debug.Log(JsonUtility.FromJson<HandJson>(webRequest.downloadHandler.text).frame);
                     poseRequest.index += 1;
                     UIManager.Instancce.UpdateProgressBar(receivedJson.frame / totalFrames);
                 }

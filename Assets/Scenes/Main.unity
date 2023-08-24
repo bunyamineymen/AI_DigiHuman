@@ -11353,6 +11353,7 @@ MonoBehaviour:
   onlyCurrentIndex: 0
   recorder: {fileID: 0}
   fileIndex: 1
+  playSpeed: 0
 --- !u!4 &547913706
 Transform:
   m_ObjectHideFlags: 0
@@ -13367,6 +13368,7 @@ MonoBehaviour:
   onlyCurrentIndex: 0
   recorder: {fileID: 1408916457}
   fileIndex: 96
+  playSpeed: 4
 --- !u!4 &620901067
 Transform:
   m_ObjectHideFlags: 0
@@ -14237,7 +14239,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
-  m_Url: file://C:/Users/bny/Desktop/Desktop_BSL/orig2.avi
+  m_Url: file://C:\Users/bny/Desktop/BSLVideos/orig2.avi
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -22600,6 +22602,7 @@ MonoBehaviour:
   onlyCurrentIndex: 0
   recorder: {fileID: 0}
   fileIndex: 1
+  playSpeed: 0
 --- !u!4 &1135277943
 Transform:
   m_ObjectHideFlags: 0

@@ -125,7 +125,9 @@ public class FrameReader : MonoBehaviour
     {
 
         if (!pause)
-            timer += Time.fixedDeltaTime;
+        {
+            timer += Time.fixedDeltaTime * 1f;
+        }
 
         currentAnimationSlot = (int)slider.value;
 
@@ -678,6 +680,10 @@ public class FrameReader : MonoBehaviour
     #region Recording
 
     private bool recording = false;
+
+    [SerializeField]
+    private float playSpeed;
+
     public void StartRecording()
     {
         if (!pause)

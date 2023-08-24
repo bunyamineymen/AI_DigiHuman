@@ -245,6 +245,7 @@ public class Pose3DMapper : CharacterMapper
         var head = jointPoints[(int)BodyPoints.Head];
         head.InitRotation = jointPoints[(int)BodyPoints.Head].Transform.rotation;
         var gaze = head.Transform.up;
+
         Debug.Log(gaze);
 
         head.Inverse = Quaternion.Inverse(Quaternion.LookRotation(gaze));
