@@ -1,3 +1,5 @@
+﻿using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,6 +100,16 @@ public class FrameReader : MonoBehaviour
     [SerializeField] private GameObject recorder;
 
     private Quaternion characterRotation;
+
+    private float timer = 0;
+    private string jsonTest;
+    [SerializeField] private int fileIndex = 1;
+
+    #endregion
+
+
+    #region Monobehaviours
+
     private void Start()
     {
         estimatedPoses = new List<PoseJsonVector>();
@@ -110,16 +122,9 @@ public class FrameReader : MonoBehaviour
         videoPlayer.Play();
         videoPlayer.frame = 0;
         videoPlayer.Pause();
+
+        CliffStartMethod();
     }
-
-    private float timer = 0;
-    private string jsonTest;
-    [SerializeField] private int fileIndex = 1;
-
-    #endregion
-
-
-    #region FixedUpdate
 
     private void FixedUpdate()
     {
@@ -279,6 +284,66 @@ public class FrameReader : MonoBehaviour
 
 
     }
+
+    #endregion
+
+
+    #region Cliff
+
+    private void CliffStartMethod()
+    {
+        //Json Read
+
+        // JSON dosya yolunu belirleyin (Assets klasörüne göre)
+        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity.json");
+        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_hardest.json");
+        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/main_demo_data_unity.json");
+
+        if (File.Exists(filePath))
+        {
+            // Dosyanın içeriğini okuyun
+            string jsonText = File.ReadAllText(filePath);
+
+
+
+
+            //JSON verisini işleyin(örneğin, Debug.Log ile konsola yazdırın)
+            Debug.Log("JSON Verisi: " + jsonText);
+
+            // JSON verisini parse et
+            CliffPoseJson data = JsonConvert.DeserializeObject<CliffPoseJson>(jsonText);
+
+            // Parse edilen veriyi kullan
+            Debug.Log("Name: " + data.frames[0].BodyPartRotations[0].x);
+
+
+
+
+
+            //FramesContainer framesContainer = JsonUtility.FromJson<FramesContainer>(jsonText);
+
+            //Debug.Log(framesContainer.frames[0].values[0].x);
+
+            //foreach (FrameDataa frame in framesContainer.frames)
+            //{
+            //    foreach (Vector4 values in frame.values)
+            //    {
+            //        Debug.Log(values.x); // Vektör değerlerini Unity konsolunda görüntüleyin
+            //    }
+            //}
+
+        }
+        else
+        {
+            Debug.LogError("JSON dosyası bulunamadı: " + filePath);
+        }
+
+    }
+
+    #endregion
+
+
+    #region FixedUpdate Content
 
     private void PlayVideo()
     {
@@ -729,6 +794,31 @@ public class FrameReader : MonoBehaviour
 
 
 #region Struct - Helper
+
+
+
+[Serializable]
+public class CliffPoseJson
+{
+    public List<CliffFrame> frames;
+}
+
+[Serializable]
+public class CliffBodyPart
+{
+    public float x;
+    public float y;
+    public float z;
+    public float w;
+}
+
+[Serializable]
+public class CliffFrame
+{
+    public List<CliffBodyPart> BodyPartRotations;
+}
+
+
 
 [Serializable]
 public struct BodyPart

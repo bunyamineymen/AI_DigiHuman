@@ -5847,7 +5847,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &203192802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5870,7 +5870,7 @@ MonoBehaviour:
   serverFaceUploadURL: http://127.0.0.1:5000/faceUploader
   serverFaceMocapURL: http://127.0.0.1:5000/face
   frameReader: {fileID: 620901066}
-  enableDebug: 1
+  enableDebug: 0
   filePath: C:/Users/bny/Desktop/BSLVideos/orig2.avi
 --- !u!4 &203192803
 Transform:
