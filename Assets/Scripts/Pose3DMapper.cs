@@ -162,6 +162,8 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int)BodyPoints.LeftElbow].Child = jointPoints[(int)BodyPoints.LeftWrist];
         jointPoints[(int)BodyPoints.LeftElbow].Parent = jointPoints[(int)BodyPoints.LeftShoulder];
 
+        return;
+
         // Fase
 
 
@@ -246,7 +248,7 @@ public class Pose3DMapper : CharacterMapper
         head.InitRotation = jointPoints[(int)BodyPoints.Head].Transform.rotation;
         var gaze = head.Transform.up;
 
-        Debug.Log(gaze);
+        //Debug.Log(gaze);
 
         head.Inverse = Quaternion.Inverse(Quaternion.LookRotation(gaze));
         // head.InverseRotation = head.Inverse * head.InitRotation; //TODO check why?
@@ -678,6 +680,186 @@ public class Pose3DMapper : CharacterMapper
             //throw e;
         }
     }
+
+    #region Cliff
+
+    public void PredictCliff3DPose(CliffFrame cliffFrame)
+    {
+
+
+
+        //// Hips
+        //var Hips = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Hips];
+        //jointPoints[(int)BodyPoints.Hips].Transform.rotation = CalculateRotation(Hips);
+
+        //// Spine1
+        //var Spine1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine1];
+        //jointPoints[(int)BodyPoints.Spine].Transform.rotation = CalculateRotation(Spine1);
+
+        //Debug.Log($"Quaresma w {  jointPoints[(int)BodyPoints.Neck].Transform.localRotation.w }");
+
+        // Neck
+        var Neck = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Neck];
+        jointPoints[(int)BodyPoints.Neck].Transform.localEulerAngles = CalculateRotation(Neck);
+
+        //// Head
+        //var Head = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Head];
+        //jointPoints[(int)BodyPoints.Head].Transform.rotation = CalculateRotation(Head);
+
+        return;
+
+
+
+        return;
+
+
+        //// LeftUpLeg
+        //var LeftUpLeg = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftUpLeg];
+        //jointPoints[(int)BodyPoints.LeftHip].Transform.localRotation = CalculateRotation(LeftUpLeg);
+
+        //// RightUpLeg
+        //var RightUpLeg = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightUpLeg];
+        //jointPoints[(int)BodyPoints.RightHip].Transform.localRotation = CalculateRotation(RightUpLeg);
+
+
+
+
+
+
+
+        //// LeftLeg
+        //var LeftLeg = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftLeg];
+        //jointPoints[(int)BodyPoints.LeftKnee].Transform.localRotation = CalculateRotation(LeftLeg);
+
+        //// RightLeg
+        //var RightLeg = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightLeg];
+        //jointPoints[(int)BodyPoints.RightKnee].Transform.localRotation = CalculateRotation(RightLeg);
+
+
+
+        ////// Spine2
+        ////var Spine2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine2];
+        ////jointPoints[(int)BodyPoints.].Transform.localRotation = CalculateRotation(Spine2);
+
+
+        //// LeftFoot
+        //var LeftFoot = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftFoot];
+        //jointPoints[(int)BodyPoints.LeftWrist].Transform.localRotation = CalculateRotation(LeftFoot);
+
+        //// RightFoot
+        //var RightFoot = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightFoot];
+        //jointPoints[(int)BodyPoints.RightWrist].Transform.localRotation = CalculateRotation(RightFoot);
+
+
+        ////// Hips
+        ////var Spine3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine3];
+        ////jointPoints[(int)BodyPoints.Hips].Transform.localRotation = CalculateRotation(Spine3);
+
+
+        ////// Hips
+        ////var LeftToeBase = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftToeBase];
+        ////jointPoints[(int)BodyPoints.Hips].Transform.localRotation = CalculateRotation(LeftToeBase);
+
+
+
+        ////// Hips
+        ////var RightToeBase = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightToeBase];
+        ////jointPoints[(int)BodyPoints.Hips].Transform.localRotation = CalculateRotation(RightToeBase);
+
+
+
+
+
+
+        ////// Neck
+        ////var Neck = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Neck];
+        ////jointPoints[(int)BodyPoints.Neck].Transform.localRotation = CalculateRotation(Neck);
+
+
+
+
+
+
+
+        //// LeftShoulder
+        //var LeftShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftShoulder];
+        //jointPoints[(int)BodyPoints.LeftShoulder].Transform.localRotation = CalculateRotation(LeftShoulder);
+
+        //// RightShoulder
+        //var RightShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightShoulder];
+        //jointPoints[(int)BodyPoints.RightShoulder].Transform.localRotation = CalculateRotation(RightShoulder);
+
+
+
+
+
+
+
+
+        //// LeftArm
+        //var LeftArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftArm];
+        //jointPoints[(int)BodyPoints.LeftShoulder].Transform.localRotation = CalculateRotation(LeftArm);
+
+
+        //// RightArm
+        //var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
+        //jointPoints[(int)BodyPoints.RightShoulder].Transform.localRotation = CalculateRotation(RightArm);
+
+
+        //// LeftForeArm
+        //var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
+        //jointPoints[(int)BodyPoints.LeftElbow].Transform.localRotation = CalculateRotation(LeftForeArm);
+
+
+        //// RightForeArm
+        //var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
+        //jointPoints[(int)BodyPoints.RightElbow].Transform.localRotation = CalculateRotation(RightForeArm);
+
+    }
+
+
+    private Vector3 CalculateRotation(CliffBodyPart cliffBodyPart)
+    {
+        var x = cliffBodyPart.x;
+        var y = cliffBodyPart.y;
+        var z = cliffBodyPart.z;
+        var w = cliffBodyPart.w;
+
+        Debug.Log($"Angleeee x:{x},y:{y},z:{z}");
+
+        //float additional_X = (float)Math.PI / 4;
+        //float additional_X = (float)Math.PI / 2;
+        float additional_X = Mathf.Deg2Rad * 32.9f;
+
+
+        //float additional_Y = (float)Math.PI / 4;
+        //float additional_Y = (float)Math.PI / 2;
+        float additional_Y = Mathf.Deg2Rad * 357.8f;
+
+
+        //float additional_Z = (float)Math.PI / 4;
+        float additional_Z = Mathf.Deg2Rad * 359.4F;
+
+
+        return new Vector3(x * Mathf.Rad2Deg - 32.9f, y * Mathf.Rad2Deg - 357.8f, z * Mathf.Rad2Deg - 359.4F);
+
+        //return new Vector3(32.9f, 357.8f, 359.4F);
+
+
+        //return new Quaternion(additional_X, additional_Y, additional_Z, 0);
+        //return new Quaternion(x + additional_X, y + additional_Y, z + additional_Z, 0.9589059f);
+
+
+
+        //return new Quaternion(90, 90, 90, 0.9589059f);
+
+        //return new Quaternion((float)Math.PI + x, /*(float)Math.PI +*/ y, /*(float)Math.PI*/ + z, w);
+
+    }
+
+    #endregion
+
+
 }
 
 

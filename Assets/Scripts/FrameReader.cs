@@ -129,6 +129,10 @@ public class FrameReader : MonoBehaviour
     private void FixedUpdate()
     {
 
+        Cliff_FixedUpdate();
+
+        return;
+
         if (!pause)
         {
             timer += Time.fixedDeltaTime;
@@ -173,7 +177,7 @@ public class FrameReader : MonoBehaviour
 
 
 
-        //Current Frame data
+        //Current Frame data 
 
         currentFrameData = frameData[currentAnimationSlot];
 
@@ -285,10 +289,14 @@ public class FrameReader : MonoBehaviour
 
     }
 
+
+
     #endregion
 
 
     #region Cliff
+
+
 
     private void CliffStartMethod()
     {
@@ -306,36 +314,59 @@ public class FrameReader : MonoBehaviour
 
 
 
-
             //JSON verisini işleyin(örneğin, Debug.Log ile konsola yazdırın)
-            Debug.Log("JSON Verisi: " + jsonText);
+            //Debug.Log("JSON Verisi: " + jsonText);
 
             // JSON verisini parse et
             CliffPoseJson data = JsonConvert.DeserializeObject<CliffPoseJson>(jsonText);
 
             // Parse edilen veriyi kullan
-            Debug.Log("Name: " + data.frames[0].BodyPartRotations[0].x);
+            //Debug.Log("Name: " + data.frames[0].BodyPartRotations[0].x);
 
+            cliffFrames = data.frames;
+            cliffIsActive = true;
 
-
-
-
-            //FramesContainer framesContainer = JsonUtility.FromJson<FramesContainer>(jsonText);
-
-            //Debug.Log(framesContainer.frames[0].values[0].x);
-
-            //foreach (FrameDataa frame in framesContainer.frames)
-            //{
-            //    foreach (Vector4 values in frame.values)
-            //    {
-            //        Debug.Log(values.x); // Vektör değerlerini Unity konsolunda görüntüleyin
-            //    }
-            //}
 
         }
         else
         {
             Debug.LogError("JSON dosyası bulunamadı: " + filePath);
+        }
+
+    }
+
+    private bool cliffIsActive = true;
+
+    private float cliffTimer = 0;
+    private int currentCliffAnimationIndex = 0;
+    private float cliffNextFrameTime = 0.0833f;
+
+    private List<CliffFrame> cliffFrames;
+    private CliffFrame currentCliffFrameData;
+
+
+    public CliffFrame currentCliffPose;
+    public CliffFrame currentCliffPoseNew;
+
+    private void Cliff_FixedUpdate()
+    {
+        if (!cliffIsActive)
+            return;
+
+        cliffTimer += Time.fixedDeltaTime;
+
+        currentCliffFrameData = cliffFrames[currentCliffAnimationIndex];
+
+        if (cliffTimer >= cliffNextFrameTime)
+        {
+            Debug.Log("Cliff_FixedUpdate");
+
+            timer = 0;
+            currentCliffAnimationIndex++;
+
+            pose3DMapper.PredictCliff3DPose(currentCliffFrameData);
+            //handPose.PredictCliff3DPose(currentCliffFrameData);
+
         }
 
     }
@@ -795,7 +826,61 @@ public class FrameReader : MonoBehaviour
 
 #region Struct - Helper
 
-
+public enum BodyPartsOfCliff
+{
+    Hips = 0,
+    LeftUpLeg = 1,
+    RightUpLeg = 2,
+    Spine1 = 3,
+    LeftLeg = 4,
+    RightLeg = 5,
+    Spine2 = 6,
+    LeftFoot = 7,
+    RightFoot = 8,
+    Spine3 = 9,
+    LeftToeBase = 10,
+    RightToeBase = 11,
+    Neck = 12,
+    LeftShoulder = 13,
+    RightShoulder = 14,
+    Head = 15,
+    LeftArm = 16,
+    RightArm = 17,
+    LeftForeArm = 18,
+    RightForeArm = 19,
+    LeftHand = 20,
+    RightHand = 21,
+    LeftHandIndex1 = 22,
+    LeftHandIndex2 = 23,
+    LeftHandIndex3 = 24,
+    LeftHandMiddle1 = 25,
+    LeftHandMiddle2 = 26,
+    LeftHandMiddle3 = 27,
+    LeftHandPinky1 = 28,
+    LeftHandPinky2 = 29,
+    LeftHandPinky3 = 30,
+    LeftHandRing1 = 31,
+    LeftHandRing2 = 32,
+    LeftHandRing3 = 33,
+    LeftHandThumb1 = 34,
+    LeftHandThumb2 = 35,
+    LeftHandThumb3 = 36,
+    RightHandIndex1 = 37,
+    RightHandIndex2 = 38,
+    RightHandIndex3 = 39,
+    RightHandMiddle1 = 40,
+    RightHandMiddle2 = 41,
+    RightHandMiddle3 = 42,
+    RightHandPinky1 = 43,
+    RightHandPinky2 = 44,
+    RightHandPinky3 = 45,
+    RightHandRing1 = 46,
+    RightHandRing2 = 47,
+    RightHandRing3 = 48,
+    RightHandThumb1 = 49,
+    RightHandThumb2 = 50,
+    RightHandThumb3 = 51
+}
 
 [Serializable]
 public class CliffPoseJson

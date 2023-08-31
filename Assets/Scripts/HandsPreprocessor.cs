@@ -89,11 +89,6 @@ public class HandsPreprocessor : CharacterMapper
 
     }
 
-    public override void Predict3DPose(PoseJsonVector poseJsonVector)
-    {
-        throw new NotImplementedException();
-    }
-
 
     public void DataCleaner(FrameData[] frameDatas)
     {
@@ -757,4 +752,169 @@ public class HandsPreprocessor : CharacterMapper
         leftElbow = new JointPoint();
         leftElbow.Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
     }
+
+
+
+    #region Cliff
+
+    public void PredictCliff3DPose(CliffFrame cliffFrame)
+    {
+
+        #region Left Hand
+
+        // Left Hand
+        var leftHandWrist = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
+        leftHand[(int)HandPoints.Wrist].Transform.localRotation = CalculateRotation(leftHandWrist);
+
+
+
+        // Left Index Fingers 
+        var leftHandIndex1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandIndex1];
+        leftHand[(int)HandPoints.IndexFingerFirst].Transform.localRotation = CalculateRotation(leftHandIndex1);
+
+        var leftHandIndex2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
+        leftHand[(int)HandPoints.IndexFingerSecond].Transform.localRotation = CalculateRotation(leftHandIndex2);
+
+        var leftHandIndex3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
+        leftHand[(int)HandPoints.IndexFingerThird].Transform.localRotation = CalculateRotation(leftHandIndex3);
+
+
+        // Left Middle Fingers 
+        var leftHandMiddle1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle1];
+        leftHand[(int)HandPoints.MiddleFingerFirst].Transform.localRotation = CalculateRotation(leftHandMiddle1);
+
+        var leftHandMiddle2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle2];
+        leftHand[(int)HandPoints.MiddleFingerSecond].Transform.localRotation = CalculateRotation(leftHandMiddle2);
+
+        var leftHandMiddle3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle3];
+        leftHand[(int)HandPoints.MiddleFingerThird].Transform.localRotation = CalculateRotation(leftHandIndex3);
+
+
+
+        // Left Pinky 
+        var leftHandPinky1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky1];
+        leftHand[(int)HandPoints.PinkyFirst].Transform.localRotation = CalculateRotation(leftHandPinky1);
+
+        var leftHandPinky2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky2];
+        leftHand[(int)HandPoints.PinkySecond].Transform.localRotation = CalculateRotation(leftHandPinky2);
+
+        var leftHandPinky3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky3];
+        leftHand[(int)HandPoints.PinkyThird].Transform.localRotation = CalculateRotation(leftHandPinky3);
+
+
+
+        // Left Ring 
+        var leftHandRing1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing1];
+        leftHand[(int)HandPoints.RingFingerFirst].Transform.localRotation = CalculateRotation(leftHandRing1);
+
+        var leftHandRing2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing2];
+        leftHand[(int)HandPoints.RingFingerSecond].Transform.localRotation = CalculateRotation(leftHandRing2);
+
+        var leftHandRing3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing3];
+        leftHand[(int)HandPoints.RingFingerThird].Transform.localRotation = CalculateRotation(leftHandRing3);
+
+
+
+        // Left Thumb
+        var leftHandThumb1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb1];
+        leftHand[(int)HandPoints.ThumbFirst].Transform.localRotation = CalculateRotation(leftHandThumb1);
+
+        var leftHandThumb2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb2];
+        leftHand[(int)HandPoints.ThumbSecond].Transform.localRotation = CalculateRotation(leftHandThumb2);
+
+        var leftHandThumb3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb3];
+        leftHand[(int)HandPoints.ThumbThird].Transform.localRotation = CalculateRotation(leftHandThumb3);
+
+        #endregion
+
+        #region Right Hand
+
+        // Right Hand
+
+        var rightHandWrist = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHand];
+        rightHand[(int)HandPoints.Wrist].Transform.localRotation = CalculateRotation(rightHandWrist);
+
+
+        // Right Index Fingers 
+        var rightHandIndex1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex1];
+        rightHand[(int)HandPoints.IndexFingerFirst].Transform.localRotation = CalculateRotation(rightHandIndex1);
+
+        var rightHandIndex2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex2];
+        rightHand[(int)HandPoints.IndexFingerSecond].Transform.localRotation = CalculateRotation(rightHandIndex2);
+
+        var rightHandIndex3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex3];
+        rightHand[(int)HandPoints.IndexFingerThird].Transform.localRotation = CalculateRotation(rightHandIndex3);
+
+
+        // Right Middle Fingers 
+        var rightHandMiddle1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle1];
+        rightHand[(int)HandPoints.MiddleFingerFirst].Transform.localRotation = CalculateRotation(rightHandMiddle1);
+
+        var rightHandMiddle2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle2];
+        rightHand[(int)HandPoints.MiddleFingerSecond].Transform.localRotation = CalculateRotation(rightHandMiddle2);
+
+        var rightHandMiddle3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle3];
+        rightHand[(int)HandPoints.MiddleFingerThird].Transform.localRotation = CalculateRotation(rightHandMiddle3);
+
+
+
+        // Right Pinky 
+        var rightHandPinky1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky1];
+        rightHand[(int)HandPoints.PinkyFirst].Transform.localRotation = CalculateRotation(rightHandPinky1);
+
+        var rightHandPinky2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky2];
+        rightHand[(int)HandPoints.PinkySecond].Transform.localRotation = CalculateRotation(rightHandPinky2);
+
+        var rightHandPinky3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky3];
+        rightHand[(int)HandPoints.PinkyThird].Transform.localRotation = CalculateRotation(rightHandPinky3);
+
+
+
+        // Right Ring 
+        var rightHandRing1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing1];
+        rightHand[(int)HandPoints.RingFingerFirst].Transform.localRotation = CalculateRotation(rightHandRing1);
+
+        var rightHandRing2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing2];
+        rightHand[(int)HandPoints.RingFingerSecond].Transform.localRotation = CalculateRotation(rightHandRing2);
+
+        var rightHandRing3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing3];
+        rightHand[(int)HandPoints.RingFingerThird].Transform.localRotation = CalculateRotation(rightHandRing3);
+
+
+
+        // Right Thumb
+        var rightHandThumb1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb1];
+        rightHand[(int)HandPoints.ThumbFirst].Transform.localRotation = CalculateRotation(rightHandThumb1);
+
+        var rightHandThumb2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb2];
+        rightHand[(int)HandPoints.ThumbSecond].Transform.localRotation = CalculateRotation(rightHandThumb2);
+
+        var rightHandThumb3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb3];
+        rightHand[(int)HandPoints.ThumbThird].Transform.localRotation = CalculateRotation(rightHandThumb3);
+
+
+        #endregion
+
+    }
+
+    private Quaternion CalculateRotation(CliffBodyPart cliffBodyPart)
+    {
+        var x = cliffBodyPart.x;
+        var y = cliffBodyPart.y;
+        var z = cliffBodyPart.z;
+        var w = cliffBodyPart.w;
+
+        return new Quaternion(x, y, z, w);
+    }
+
+    public override void Predict3DPose(PoseJsonVector poseJsonVector)
+    {
+
+    }
+
+    #endregion
+
+
+
+
 }
