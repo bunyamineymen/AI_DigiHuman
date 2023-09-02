@@ -18,9 +18,11 @@ public enum BodyPoints : int
     LeftMouth,
     RightMouth,
     LeftShoulder,
+    LeftUpperArm,
+    LeftLowerArm,
     RightShoulder,
-    LeftElbow,
-    RightElbow,
+    RightUpperArm,
+    RightLowerArm,
     LeftWrist,
     RightWrist,
     LeftPinky,
@@ -125,20 +127,24 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int)BodyPoints.Neck].DefaultRotation = jointPoints[(int)BodyPoints.Neck].Transform.localEulerAngles;
 
         // Right Arm
-        jointPoints[(int)BodyPoints.RightShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperArm);
+        jointPoints[(int)BodyPoints.RightShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.RightShoulder);
         jointPoints[(int)BodyPoints.RightShoulder].DefaultRotation = jointPoints[(int)BodyPoints.RightShoulder].Transform.localEulerAngles;
 
-        jointPoints[(int)BodyPoints.RightElbow].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
-        jointPoints[(int)BodyPoints.RightElbow].DefaultRotation = jointPoints[(int)BodyPoints.RightElbow].Transform.localEulerAngles;
+        jointPoints[(int)BodyPoints.RightUpperArm].Transform = anim.GetBoneTransform(HumanBodyBones.RightUpperArm);
+        jointPoints[(int)BodyPoints.RightUpperArm].DefaultRotation = jointPoints[(int)BodyPoints.RightUpperArm].Transform.localEulerAngles;
+
+        jointPoints[(int)BodyPoints.RightLowerArm].Transform = anim.GetBoneTransform(HumanBodyBones.RightLowerArm);
+        jointPoints[(int)BodyPoints.RightLowerArm].DefaultRotation = jointPoints[(int)BodyPoints.RightLowerArm].Transform.localEulerAngles;
 
         // Left Arm
-        jointPoints[(int)BodyPoints.LeftShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        jointPoints[(int)BodyPoints.LeftShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.LeftShoulder);
         jointPoints[(int)BodyPoints.LeftShoulder].DefaultRotation = jointPoints[(int)BodyPoints.LeftShoulder].Transform.localEulerAngles;
 
-        jointPoints[(int)BodyPoints.LeftElbow].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
-        jointPoints[(int)BodyPoints.LeftElbow].DefaultRotation = jointPoints[(int)BodyPoints.LeftElbow].Transform.localEulerAngles;
+        jointPoints[(int)BodyPoints.LeftUpperArm].Transform = anim.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        jointPoints[(int)BodyPoints.LeftUpperArm].DefaultRotation = jointPoints[(int)BodyPoints.LeftUpperArm].Transform.localEulerAngles;
 
-
+        jointPoints[(int)BodyPoints.LeftLowerArm].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+        jointPoints[(int)BodyPoints.LeftLowerArm].DefaultRotation = jointPoints[(int)BodyPoints.LeftLowerArm].Transform.localEulerAngles;
 
         //////
 
@@ -185,14 +191,14 @@ public class Pose3DMapper : CharacterMapper
 
         // Child Settings
         // Right Arm
-        jointPoints[(int)BodyPoints.RightShoulder].Child = jointPoints[(int)BodyPoints.RightElbow];
-        jointPoints[(int)BodyPoints.RightElbow].Child = jointPoints[(int)BodyPoints.RightWrist];
-        jointPoints[(int)BodyPoints.RightElbow].Parent = jointPoints[(int)BodyPoints.RightShoulder];
+        jointPoints[(int)BodyPoints.RightShoulder].Child = jointPoints[(int)BodyPoints.RightUpperArm];
+        jointPoints[(int)BodyPoints.RightUpperArm].Child = jointPoints[(int)BodyPoints.RightLowerArm];
+        jointPoints[(int)BodyPoints.RightUpperArm].Parent = jointPoints[(int)BodyPoints.RightShoulder];
 
         // Left Arm
-        jointPoints[(int)BodyPoints.LeftShoulder].Child = jointPoints[(int)BodyPoints.LeftElbow];
-        jointPoints[(int)BodyPoints.LeftElbow].Child = jointPoints[(int)BodyPoints.LeftWrist];
-        jointPoints[(int)BodyPoints.LeftElbow].Parent = jointPoints[(int)BodyPoints.LeftShoulder];
+        jointPoints[(int)BodyPoints.LeftShoulder].Child = jointPoints[(int)BodyPoints.LeftUpperArm];
+        jointPoints[(int)BodyPoints.LeftLowerArm].Child = jointPoints[(int)BodyPoints.LeftWrist];
+        jointPoints[(int)BodyPoints.LeftUpperArm].Parent = jointPoints[(int)BodyPoints.LeftShoulder];
 
         return;
 
@@ -604,8 +610,8 @@ public class Pose3DMapper : CharacterMapper
                                                                 jointPoints[(int)BodyPoints.Hips].InverseRotation;
 
         //IK
-        characterBodyIK.leftElbow.transform.position = bodyPartVectors[(int)BodyPoints.LeftElbow].position;
-        characterBodyIK.rightElbow.transform.position = bodyPartVectors[(int)BodyPoints.RightElbow].position;
+        //characterBodyIK.leftElbow.transform.position = bodyPartVectors[(int)BodyPoints.LeftElbow].position;
+        //characterBodyIK.rightElbow.transform.position = bodyPartVectors[(int)BodyPoints.RightElbow].position;
         characterBodyIK.leftAnkle.transform.position = bodyPartVectors[(int)BodyPoints.LeftAnkle].position;
         characterBodyIK.rightAnkle.transform.position = bodyPartVectors[(int)BodyPoints.RightAnkle].position;
         characterBodyIK.leftWrist.transform.position = bodyPartVectors[(int)BodyPoints.LeftWrist].position;
@@ -737,11 +743,12 @@ public class Pose3DMapper : CharacterMapper
 
         // RightArm
         var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
-        CalculateRotation(jointPoints[(int)BodyPoints.RightShoulder], RightArm, true, Vector3.zero);
+        CalculateRotation(jointPoints[(int)BodyPoints.RightUpperArm], RightArm, true, Vector3.zero);
 
         // RightForeArm
         var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
-        CalculateRotation(jointPoints[(int)BodyPoints.RightElbow], RightForeArm, true, Vector3.zero);
+        CalculateRotation(jointPoints[(int)BodyPoints.RightLowerArm], RightForeArm, true, Vector3.zero);
+
 
 
         //return;
@@ -753,11 +760,11 @@ public class Pose3DMapper : CharacterMapper
 
         // LeftArm
         var LeftArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftArm];
-        CalculateRotation(jointPoints[(int)BodyPoints.LeftElbow], LeftArm, true, Vector3.zero);
+        CalculateRotation(jointPoints[(int)BodyPoints.LeftUpperArm], LeftArm, true, Vector3.zero);
 
         // LeftForeArm
         var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
-        CalculateRotation(jointPoints[(int)BodyPoints.LeftElbow], LeftForeArm, true, new Vector3(0, 0, 0));
+        CalculateRotation(jointPoints[(int)BodyPoints.LeftLowerArm], LeftForeArm, true, new Vector3(0, 0, 0));
 
         return;
 
