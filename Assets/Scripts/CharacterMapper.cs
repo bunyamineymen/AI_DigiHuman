@@ -14,6 +14,8 @@ public class JointPoint
     public Quaternion Inverse;
     public Quaternion InverseRotation;
     public Vector3 InitialRotation;
+
+    public Vector3 DefaultRotation;
     
     public JointPoint Child = null;
     public JointPoint Parent = null;
