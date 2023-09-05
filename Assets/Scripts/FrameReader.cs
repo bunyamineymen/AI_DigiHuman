@@ -116,7 +116,7 @@ public class FrameReader : MonoBehaviour
         estimatedFacialMocap = new List<FaceJson>();
         estimatedHandPose = new List<HandJsonVector>();
         frameData = new List<FrameData>();
-        characterRotation = character.transform.rotation;
+        //characterRotation = character.transform.rotation;
         SetBodyZoomCamera();
         videoPlayer.Prepare();
         videoPlayer.Play();
@@ -217,7 +217,7 @@ public class FrameReader : MonoBehaviour
 
         try
         {
-            character.transform.rotation = Quaternion.identity;
+            //character.transform.rotation = Quaternion.identity;
 
 
             //-------- Body Pose ------
@@ -275,13 +275,13 @@ public class FrameReader : MonoBehaviour
                 facialExpressionHandler.UpdateData(currentFaceJson);
             }
 
-            character.transform.rotation = characterRotation;
+            //character.transform.rotation = characterRotation;
             slider.value = currentAnimationSlot;
         }
         catch (Exception e)
         {
             slider.value = currentAnimationSlot;
-            character.transform.rotation = characterRotation;
+            //character.transform.rotation = characterRotation;
             Console.WriteLine(e);
             throw;
         }
