@@ -734,35 +734,55 @@ public class Pose3DMapper : CharacterMapper
     public void PredictCliff3DPose(CliffFrame cliffFrame)
     {
 
+        bool isNew = true;
+        bool isQuaternation = false;
+        bool applyDifference = false;
 
         // Neck
         var Neck = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Neck];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.Neck], Neck, true, Vector3.zero, false, true);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Neck], Neck, applyDifference, Vector3.zero, isQuaternation, isNew);
 
 
 
         // Head
         var Head = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Head];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.Head], Head, true, Vector3.zero, false, true);
-
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Head], Head, applyDifference, Vector3.zero, isQuaternation, isNew);
 
 
 
         // RightShoulder
         var RightShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightShoulder];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightShoulder], RightShoulder, true, Vector3.zero, false, true);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightShoulder], RightShoulder, applyDifference, Vector3.zero, isQuaternation, isNew);
+
+        // RightArm
+        var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightUpperArm], RightArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+
+        // RightForeArm
+        var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightLowerArm], RightForeArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+
+
+
+
+
+        // LeftShoulder
+        var LeftShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftShoulder];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftShoulder], LeftShoulder, applyDifference, Vector3.zero, isQuaternation, isNew);
+
+        // LeftArm
+        var LeftArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftArm];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftUpperArm], LeftArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+
+        // LeftForeArm
+        var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftLowerArm], LeftForeArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+
 
 
         return;
 
 
-        // RightArm
-        var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightUpperArm], RightArm, true, Vector3.zero, false, true);
-
-        // RightForeArm
-        var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightLowerArm], RightForeArm, true, Vector3.zero, false, true);
 
         return;
 
@@ -846,7 +866,7 @@ public class Pose3DMapper : CharacterMapper
 
     }
 
-    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation,bool isNew)
+    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew)
     {
         float x, y, z, w;
 
@@ -876,10 +896,20 @@ public class Pose3DMapper : CharacterMapper
         if (IsQuaternation)
         {
 
-            var quaternion = new Quaternion(x, y, z, w);
+            if (applyDifference)
+            {
+                var quaternion = new Quaternion(x, y, z, w);
+                var difference = Quaternion.Slerp(InitialRotation, quaternion, 1f);
 
-            rigTransform.localRotation = quaternion * InitialRotation;
-            //rigTransform.localRotation = quaternion;
+                Vector3 eulerDifference = difference.eulerAngles;
+                rigTransform.localEulerAngles = eulerDifference;
+
+            }
+            else
+            {
+                var quaternion = new Quaternion(x, y, z, w);
+                rigTransform.localRotation = quaternion;
+            }
 
             return;
         }

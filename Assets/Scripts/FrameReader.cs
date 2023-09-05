@@ -309,7 +309,10 @@ public class FrameReader : MonoBehaviour
 
         //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/main_demo_data_unity.json");
         //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_quat_wangxi.json");
-        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_rota_wangxi.json");
+        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_rota_wangxi.json");
+
+
+        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_quat_TPoseVideo.json");
 
         if (File.Exists(filePath))
         {
