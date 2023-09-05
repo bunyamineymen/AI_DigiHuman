@@ -305,7 +305,11 @@ public class FrameReader : MonoBehaviour
         // JSON dosya yolunu belirleyin (Assets klasörüne göre)
         //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity.json");
         //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_hardest.json");
-        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/main_demo_data_unity.json");
+
+
+        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/main_demo_data_unity.json");
+        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_quat_wangxi.json");
+        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_rota_wangxi.json");
 
         if (File.Exists(filePath))
         {
