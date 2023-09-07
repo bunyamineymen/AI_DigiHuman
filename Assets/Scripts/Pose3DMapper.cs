@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 
 using UnityEngine;
 
@@ -734,49 +735,105 @@ public class Pose3DMapper : CharacterMapper
     public void PredictCliff3DPose(CliffFrame cliffFrame)
     {
 
-        bool isNew = true;
+        bool isNew = false;
         bool isQuaternation = false;
+
+        int number = 4;
+
+        bool isGlobal = true;
         bool applyDifference = false;
+
+
+
+        // demo_data_unity_quat_TPoseVideo Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible
+
+        // demo_data_unity_rota_TPoseVideo Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible
+
+        // demo_data_unity_quat_wangxi Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible
+
+
+
+        switch (number)
+        {
+            case 1:
+                isNew = true;
+                isQuaternation = false;
+                break;
+
+            case 2:
+                isNew = true;
+                isQuaternation = true;
+                break;
+
+            case 3:
+                isNew = false;
+                isQuaternation = true;
+                break;
+
+            case 4:
+                isNew = false;
+                isQuaternation = false;
+                break;
+
+            default:
+                break;
+        }
+
+        float angle = 0;
 
         // Neck
         var Neck = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Neck];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.Neck], Neck, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Neck], Neck, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
 
 
         // Head
         var Head = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Head];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.Head], Head, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Head], Head, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
 
 
         // RightShoulder
         var RightShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightShoulder];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightShoulder], RightShoulder, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightShoulder], RightShoulder, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
+
+
 
         // RightArm
         var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightUpperArm], RightArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightUpperArm], RightArm, applyDifference, new Vector3(angle, angle,angle), isQuaternation, isNew, isGlobal);
+
+
 
         // RightForeArm
         var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.RightLowerArm], RightForeArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightLowerArm], RightForeArm, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
 
 
+        return;
 
 
 
         // LeftShoulder
         var LeftShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftShoulder];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftShoulder], LeftShoulder, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftShoulder], LeftShoulder, applyDifference, Vector3.zero, isQuaternation, isNew, isGlobal);
 
         // LeftArm
         var LeftArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftUpperArm], LeftArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftUpperArm], LeftArm, applyDifference, Vector3.zero, isQuaternation, isNew, isGlobal);
 
         // LeftForeArm
         var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
-        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftLowerArm], LeftForeArm, applyDifference, Vector3.zero, isQuaternation, isNew);
+        CalculateRotation(jointPoints[(int)HumanBodyBones.LeftLowerArm], LeftForeArm, applyDifference, Vector3.zero, isQuaternation, isNew, isGlobal);
 
 
 
@@ -866,7 +923,7 @@ public class Pose3DMapper : CharacterMapper
 
     }
 
-    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew)
+    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew,bool isGlobal)
     {
         float x, y, z, w;
 
@@ -893,6 +950,7 @@ public class Pose3DMapper : CharacterMapper
 
         Vector3 localEulerAngles = additionalRotation;
 
+
         if (IsQuaternation)
         {
 
@@ -902,13 +960,30 @@ public class Pose3DMapper : CharacterMapper
                 var difference = Quaternion.Slerp(InitialRotation, quaternion, 1f);
 
                 Vector3 eulerDifference = difference.eulerAngles;
-                rigTransform.localEulerAngles = eulerDifference;
+
+                if (isGlobal)
+                {
+                    rigTransform.rotation = difference;
+                }
+                else
+                {
+                    rigTransform.localEulerAngles = eulerDifference;
+                }
 
             }
             else
             {
                 var quaternion = new Quaternion(x, y, z, w);
-                rigTransform.localRotation = quaternion;
+
+                if (isGlobal)
+                {
+                    rigTransform.rotation = quaternion;
+                }
+                else
+                {
+                    rigTransform.localRotation = quaternion;
+                }
+
             }
 
             return;
