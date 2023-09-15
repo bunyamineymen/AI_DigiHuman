@@ -81,9 +81,19 @@ public struct CharacterBody
 }
 
 
+public enum CliffStatee
+{ 
+    IsNewAngleAndEuler = 1,
+    IsNewAndQuaternation = 2,
+    IsOldAndQuaternation = 3,
+    IsOldAndEuler = 4
+}
+
 
 public class Pose3DMapper : CharacterMapper
 {
+
+    public CliffConfiguration CliffConfiguration;
 
 
     [SerializeField] private FrameReader frameReader;
@@ -122,7 +132,39 @@ public class Pose3DMapper : CharacterMapper
             }
         }
 
-        //////
+
+
+
+
+
+        //////HIPS
+
+        jointPoints[(int)HumanBodyBones.Hips].Transform = anim.GetBoneTransform(HumanBodyBones.Hips);
+        jointPoints[(int)HumanBodyBones.Hips].DefaultRotation = jointPoints[(int)HumanBodyBones.Hips].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.Hips].InitRotation = jointPoints[(int)HumanBodyBones.Hips].Transform.rotation;
+
+        //////Spine
+
+        jointPoints[(int)HumanBodyBones.Spine].Transform = anim.GetBoneTransform(HumanBodyBones.Spine);
+        jointPoints[(int)HumanBodyBones.Spine].DefaultRotation = jointPoints[(int)HumanBodyBones.Spine].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.Spine].InitRotation = jointPoints[(int)HumanBodyBones.Spine].Transform.rotation;
+
+
+        //////Chest
+
+        jointPoints[(int)HumanBodyBones.Chest].Transform = anim.GetBoneTransform(HumanBodyBones.Chest);
+        jointPoints[(int)HumanBodyBones.Chest].DefaultRotation = jointPoints[(int)HumanBodyBones.Chest].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.Chest].InitRotation = jointPoints[(int)HumanBodyBones.Chest].Transform.rotation;
+
+
+        //////UpperChest
+
+        jointPoints[(int)HumanBodyBones.UpperChest].Transform = anim.GetBoneTransform(HumanBodyBones.UpperChest);
+        jointPoints[(int)HumanBodyBones.UpperChest].DefaultRotation = jointPoints[(int)HumanBodyBones.UpperChest].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.UpperChest].InitRotation = jointPoints[(int)HumanBodyBones.UpperChest].Transform.rotation;
+
+
+        //////Neck
 
         jointPoints[(int)HumanBodyBones.Neck].Transform = anim.GetBoneTransform(HumanBodyBones.Neck);
         jointPoints[(int)HumanBodyBones.Neck].DefaultRotation = jointPoints[(int)HumanBodyBones.Neck].Transform.localEulerAngles;
@@ -141,6 +183,10 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int)HumanBodyBones.RightLowerArm].DefaultRotation = jointPoints[(int)HumanBodyBones.RightLowerArm].Transform.localEulerAngles;
         jointPoints[(int)HumanBodyBones.RightLowerArm].InitRotation = jointPoints[(int)HumanBodyBones.RightLowerArm].Transform.rotation;
 
+        jointPoints[(int)HumanBodyBones.RightHand].Transform = anim.GetBoneTransform(HumanBodyBones.RightHand);
+        jointPoints[(int)HumanBodyBones.RightHand].DefaultRotation = jointPoints[(int)HumanBodyBones.RightHand].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.RightHand].InitRotation = jointPoints[(int)HumanBodyBones.RightHand].Transform.rotation;
+
         // Left Arm
         jointPoints[(int)HumanBodyBones.LeftShoulder].Transform = anim.GetBoneTransform(HumanBodyBones.LeftShoulder);
         jointPoints[(int)HumanBodyBones.LeftShoulder].DefaultRotation = jointPoints[(int)HumanBodyBones.LeftShoulder].Transform.localEulerAngles;
@@ -154,9 +200,13 @@ public class Pose3DMapper : CharacterMapper
         jointPoints[(int)HumanBodyBones.LeftLowerArm].DefaultRotation = jointPoints[(int)HumanBodyBones.LeftLowerArm].Transform.localEulerAngles;
         jointPoints[(int)HumanBodyBones.LeftLowerArm].InitRotation = jointPoints[(int)HumanBodyBones.LeftLowerArm].Transform.rotation;
 
+        jointPoints[(int)HumanBodyBones.LeftHand].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);
+        jointPoints[(int)HumanBodyBones.LeftHand].DefaultRotation = jointPoints[(int)HumanBodyBones.LeftHand].Transform.localEulerAngles;
+        jointPoints[(int)HumanBodyBones.LeftHand].InitRotation = jointPoints[(int)HumanBodyBones.LeftHand].Transform.rotation;
+
         //////
 
-        jointPoints[(int)HumanBodyBones.RightHand].Transform = anim.GetBoneTransform(HumanBodyBones.RightHand);
+
 
 
         jointPoints[(int)HumanBodyBones.LeftHand].Transform = anim.GetBoneTransform(HumanBodyBones.LeftHand);
@@ -606,129 +656,7 @@ public class Pose3DMapper : CharacterMapper
         ////jointPoints[(int) HumanBodyBones.Hips].Transform.position = characterPlacement;
     }
 
-    ////placing and rotating bones with the help of IK algorithm
-    //private void UpdateModeIK(BodyPartVector[] bodyPartVectors)
-    //{
 
-    //    //setting hips position
-    //    characterBodyIK.hips.transform.position = bodyPartVectors[(int)HumanBodyBones.Hips].position;
-
-    //    //setting hip rotation
-    //    Vector3 a = bodyPartVectors[(int)HumanBodyBones.LeftShoulder].position;
-    //    Vector3 b = jointPoints[(int)HumanBodyBones.Hips].Transform.position;
-    //    Vector3 c = bodyPartVectors[(int)HumanBodyBones.RightShoulder].position;
-    //    jointPoints[(int)HumanBodyBones.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
-    //                                                            jointPoints[(int)HumanBodyBones.Hips].InverseRotation;
-
-    //    //IK
-    //    //characterBodyIK.leftElbow.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftElbow].position;
-    //    //characterBodyIK.rightElbow.transform.position = bodyPartVectors[(int)HumanBodyBones.RightElbow].position;
-    //    characterBodyIK.leftAnkle.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftAnkle].position;
-    //    characterBodyIK.rightAnkle.transform.position = bodyPartVectors[(int)HumanBodyBones.RightAnkle].position;
-    //    characterBodyIK.leftWrist.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftWrist].position;
-    //    characterBodyIK.rightWrist.transform.position = bodyPartVectors[(int)HumanBodyBones.RightWrist].position;
-    //    //return;
-
-    //    characterBodyIK.leftShoulder.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftShoulder].position;
-    //    characterBodyIK.rightShoulder.transform.position = bodyPartVectors[(int)HumanBodyBones.RightShoulder].position;
-
-    //    characterBodyIK.leftHip.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftHip].position;
-    //    characterBodyIK.rightHip.transform.position = bodyPartVectors[(int)HumanBodyBones.RightHip].position;
-    //    characterBodyIK.leftKnee.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftKnee].position;
-    //    characterBodyIK.rightKnee.transform.position = bodyPartVectors[(int)HumanBodyBones.RightKnee].position;
-    //    characterBodyIK.leftHeel.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftHeel].position;
-    //    characterBodyIK.rightHeel.transform.position = bodyPartVectors[(int)HumanBodyBones.RightHeel].position;
-
-    //    PoseJson poseJson = frameReader.currentPoseJson;
-    //    BodyPart[] bodyParts = poseJson.predictions;
-    //    characterBodyIK.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
-    //        -bodyParts[11].y, bodyParts[11].z);
-
-    //    characterBodyIK.rightShoulder.transform.position = new Vector3(-bodyParts[12].x,
-    //        -bodyParts[12].y, bodyParts[12].z);
-
-    //    characterBodyIK.leftElbow.transform.position = new Vector3(-bodyParts[13].x,
-    //        -bodyParts[13].y, bodyParts[13].z);
-
-    //    characterBodyIK.rightElbow.transform.position = new Vector3(-bodyParts[14].x,
-    //        -bodyParts[14].y, bodyParts[14].z);
-
-    //    characterBodyIK.leftWrist.transform.position = new Vector3(-bodyParts[15].x,
-    //        -bodyParts[15].y, bodyParts[15].z);
-
-    //    characterBodyIK.rightWrist.transform.position = new Vector3(-bodyParts[16].x,
-    //        -bodyParts[16].y, bodyParts[16].z);
-
-    //    characterBodyIK.leftHip.transform.position = new Vector3(-bodyParts[23].x,
-    //        -bodyParts[23].y, bodyParts[23].z);
-
-    //    characterBodyIK.rightHip.transform.position = new Vector3(-bodyParts[24].x,
-    //        -bodyParts[24].y, bodyParts[24].z);
-
-    //    characterBodyIK.hips.transform.position = (characterBodyIK.rightHip.transform.position +
-    //                                             characterBodyIK.leftHip.transform.position +
-    //                                             characterBodyIK.leftShoulder.transform.position +
-    //                                             characterBodyIK.rightShoulder.transform.position) / 4;
-
-
-    //    characterBodyIK.leftKnee.transform.position = new Vector3(-bodyParts[25].x,
-    //        -bodyParts[25].y, bodyParts[25].z);
-
-    //    characterBodyIK.rightKnee.transform.position = new Vector3(-bodyParts[26].x,
-    //        -bodyParts[26].y, bodyParts[26].z);
-
-    //    characterBodyIK.leftHeel.transform.position = new Vector3(-bodyParts[27].x,
-    //        -bodyParts[27].y, bodyParts[27].z);
-
-    //    characterBodyIK.rightHeel.transform.position = new Vector3(-bodyParts[28].x,
-    //        -bodyParts[28].y, bodyParts[28].z);
-
-    //    characterBodyIK.leftAnkle.transform.position = new Vector3(-bodyParts[27].x,
-    //        -bodyParts[27].y, bodyParts[27].z);
-
-    //    characterBodyIK.rightAnkle.transform.position = new Vector3(-bodyParts[28].x,
-    //        -bodyParts[28].y, bodyParts[28].z);
-
-    //}
-
-    public override void Predict3DPose(PoseJsonVector poseJsonVector)
-    {
-        BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
-        if (bodyPartVectors == null)
-            return;
-        if (bodyPartVectors.Length == 0)
-            return;
-
-        if (debugMode)
-        {
-            for (int i = 0; i < bodyPartVectors.Length; i++)
-            {
-                jointsDebug[i].transform.position = bodyPartVectors[i].position;
-            }
-        }
-        try
-        {
-            character.transform.rotation = Quaternion.identity;
-
-            if (normalMode)
-            {
-                UpdateNormalMode(bodyPartVectors);
-            }
-            else if (IKEnable)
-            {
-                //UpdateModeIK(bodyPartVectors);
-            }
-
-            //character.transform.rotation = characterPlacement.rotation;
-            hips.position = characterPlacement.position;
-
-        }
-        catch (Exception e)
-        {
-            //Debug.LogError("Pose problem");
-            //throw e;
-        }
-    }
 
     #region Cliff
 
@@ -738,13 +666,10 @@ public class Pose3DMapper : CharacterMapper
         bool isNew = false;
         bool isQuaternation = false;
 
-        int number = 4;
+        bool isGlobal = CliffConfiguration.isGlobal;
+        bool applyDifference = CliffConfiguration.applyDifference;
 
-        bool isGlobal = true;
-        bool applyDifference = false;
-
-
-
+        #region MyRegion
         // demo_data_unity_quat_TPoseVideo Test
         // 1 good
         // 4 bad
@@ -758,11 +683,10 @@ public class Pose3DMapper : CharacterMapper
         // demo_data_unity_quat_wangxi Test
         // 1 good
         // 4 bad
-        // 2 3 terrible
+        // 2 3 terrible 
+        #endregion
 
-
-
-        switch (number)
+        switch ((int)CliffConfiguration.CliffStatee)
         {
             case 1:
                 isNew = true;
@@ -790,6 +714,25 @@ public class Pose3DMapper : CharacterMapper
 
         float angle = 0;
 
+
+        // hips
+        var hips = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Hips];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Hips], hips, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+        // spine
+        var spine = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine1];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Spine], spine, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+        // chest
+        var chest = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine2];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.Chest], chest, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+        // upperChest
+        var upperChest = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Spine3];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.UpperChest], upperChest, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
         // Neck
         var Neck = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.Neck];
         CalculateRotation(jointPoints[(int)HumanBodyBones.Neck], Neck, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
@@ -806,20 +749,17 @@ public class Pose3DMapper : CharacterMapper
         var RightShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightShoulder];
         CalculateRotation(jointPoints[(int)HumanBodyBones.RightShoulder], RightShoulder, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
 
-
-
         // RightArm
         var RightArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightArm];
         CalculateRotation(jointPoints[(int)HumanBodyBones.RightUpperArm], RightArm, applyDifference, new Vector3(angle, angle,angle), isQuaternation, isNew, isGlobal);
-
-
 
         // RightForeArm
         var RightForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightForeArm];
         CalculateRotation(jointPoints[(int)HumanBodyBones.RightLowerArm], RightForeArm, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
 
-
-        return;
+        // rightHand
+        var rightHand = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHand];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightHand], rightHand, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
 
 
 
@@ -835,32 +775,12 @@ public class Pose3DMapper : CharacterMapper
         var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
         CalculateRotation(jointPoints[(int)HumanBodyBones.LeftLowerArm], LeftForeArm, applyDifference, Vector3.zero, isQuaternation, isNew, isGlobal);
 
-
-
-        return;
-
-
+        // leftHand
+        var leftHand = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHand];
+        CalculateRotation(jointPoints[(int)HumanBodyBones.RightHand], leftHand, applyDifference, new Vector3(angle, angle, angle), isQuaternation, isNew, isGlobal);
 
         return;
 
-
-        //return;
-
-        // try the quaternation struct....
-
-        //// LeftShoulder
-        //var LeftShoulder = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftShoulder];
-        //CalculateRotation(jointPoints[(int)HumanBodyBones.LeftShoulder], LeftShoulder, true, new Vector3(0, 0, 0), false, true);
-
-        //// LeftArm
-        //var LeftArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftArm];
-        //CalculateRotation(jointPoints[(int)HumanBodyBones.LeftUpperArm], LeftArm, true, Vector3.zero, false, true);
-
-        //// LeftForeArm
-        //var LeftForeArm = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftForeArm];
-        //CalculateRotation(jointPoints[(int)HumanBodyBones.LeftLowerArm], LeftForeArm, true, new Vector3(0, 0, 0), false, true);
-
-        //return;
 
         #region Comment
 
@@ -923,7 +843,8 @@ public class Pose3DMapper : CharacterMapper
 
     }
 
-    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew,bool isGlobal)
+
+    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew, bool isGlobal)
     {
         float x, y, z, w;
 
@@ -948,42 +869,27 @@ public class Pose3DMapper : CharacterMapper
         var InitialRotation = jointPoint.InitRotation;
         var rigTransform = jointPoint.Transform;
 
-        Vector3 localEulerAngles = additionalRotation;
+        Vector3 eulerAngles = additionalRotation;
 
+        var quaternion = new Quaternion(x, y, z, w);
 
         if (IsQuaternation)
         {
-
-            if (applyDifference)
+            if (isGlobal)
             {
-                var quaternion = new Quaternion(x, y, z, w);
-                var difference = Quaternion.Slerp(InitialRotation, quaternion, 1f);
-
-                Vector3 eulerDifference = difference.eulerAngles;
-
-                if (isGlobal)
+                if (applyDifference)
                 {
-                    rigTransform.rotation = difference;
-                }
-                else
-                {
-                    rigTransform.localEulerAngles = eulerDifference;
-                }
-
-            }
-            else
-            {
-                var quaternion = new Quaternion(x, y, z, w);
-
-                if (isGlobal)
-                {
+                    quaternion *= InitialRotation;
                     rigTransform.rotation = quaternion;
                 }
                 else
                 {
-                    rigTransform.localRotation = quaternion;
+                    rigTransform.rotation = quaternion;
                 }
-
+            }
+            else
+            {
+                rigTransform.localRotation = quaternion;
             }
 
             return;
@@ -991,16 +897,29 @@ public class Pose3DMapper : CharacterMapper
 
         if (applyDifference)
         {
-            localEulerAngles += new Vector3(x * Mathf.Rad2Deg - defaultRotation.x, y * Mathf.Rad2Deg - defaultRotation.y, z * Mathf.Rad2Deg - defaultRotation.z);
+            eulerAngles += new Vector3(x * Mathf.Rad2Deg - defaultRotation.x, y * Mathf.Rad2Deg - defaultRotation.y, z * Mathf.Rad2Deg - defaultRotation.z);
         }
         else
         {
-            localEulerAngles += new Vector3(x * Mathf.Rad2Deg, y * Mathf.Rad2Deg, z * Mathf.Rad2Deg);
+            eulerAngles += new Vector3(x * Mathf.Rad2Deg, y * Mathf.Rad2Deg, z * Mathf.Rad2Deg);
         }
 
+        if (isGlobal)
+        {
+            rigTransform.eulerAngles = eulerAngles;
+        }
+        else
+        {
+            rigTransform.localEulerAngles = eulerAngles;
+        }
+
+    }
 
 
-        rigTransform.localEulerAngles = localEulerAngles;
+    public override void Predict3DPose(PoseJsonVector poseJsonVector)
+    {
+
+
 
     }
 
@@ -1014,6 +933,134 @@ public class Pose3DMapper : CharacterMapper
 
 
 
-//setting position of each bone
-//jointPoints[(int)HumanBodyBones.Spine].Transform.position = bodyPartVectors[(int)HumanBodyBones.Spine].position;
-//jointPoints[(int)HumanBodyBones.Hips].Transform.position = bodyPartVectors[(int)HumanBodyBones.Hips].position;
+
+
+
+
+
+
+
+
+////placing and rotating bones with the help of IK algorithm
+//private void UpdateModeIK(BodyPartVector[] bodyPartVectors)
+//{
+
+//    //setting hips position
+//    characterBodyIK.hips.transform.position = bodyPartVectors[(int)HumanBodyBones.Hips].position;
+
+//    //setting hip rotation
+//    Vector3 a = bodyPartVectors[(int)HumanBodyBones.LeftShoulder].position;
+//    Vector3 b = jointPoints[(int)HumanBodyBones.Hips].Transform.position;
+//    Vector3 c = bodyPartVectors[(int)HumanBodyBones.RightShoulder].position;
+//    jointPoints[(int)HumanBodyBones.Hips].Transform.rotation = Quaternion.LookRotation(a.TriangleNormal(b, c)) *
+//                                                            jointPoints[(int)HumanBodyBones.Hips].InverseRotation;
+
+//    //IK
+//    //characterBodyIK.leftElbow.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftElbow].position;
+//    //characterBodyIK.rightElbow.transform.position = bodyPartVectors[(int)HumanBodyBones.RightElbow].position;
+//    characterBodyIK.leftAnkle.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftAnkle].position;
+//    characterBodyIK.rightAnkle.transform.position = bodyPartVectors[(int)HumanBodyBones.RightAnkle].position;
+//    characterBodyIK.leftWrist.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftWrist].position;
+//    characterBodyIK.rightWrist.transform.position = bodyPartVectors[(int)HumanBodyBones.RightWrist].position;
+//    //return;
+
+//    characterBodyIK.leftShoulder.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftShoulder].position;
+//    characterBodyIK.rightShoulder.transform.position = bodyPartVectors[(int)HumanBodyBones.RightShoulder].position;
+
+//    characterBodyIK.leftHip.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftHip].position;
+//    characterBodyIK.rightHip.transform.position = bodyPartVectors[(int)HumanBodyBones.RightHip].position;
+//    characterBodyIK.leftKnee.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftKnee].position;
+//    characterBodyIK.rightKnee.transform.position = bodyPartVectors[(int)HumanBodyBones.RightKnee].position;
+//    characterBodyIK.leftHeel.transform.position = bodyPartVectors[(int)HumanBodyBones.LeftHeel].position;
+//    characterBodyIK.rightHeel.transform.position = bodyPartVectors[(int)HumanBodyBones.RightHeel].position;
+
+//    PoseJson poseJson = frameReader.currentPoseJson;
+//    BodyPart[] bodyParts = poseJson.predictions;
+//    characterBodyIK.leftShoulder.transform.position = new Vector3(-bodyParts[11].x,
+//        -bodyParts[11].y, bodyParts[11].z);
+
+//    characterBodyIK.rightShoulder.transform.position = new Vector3(-bodyParts[12].x,
+//        -bodyParts[12].y, bodyParts[12].z);
+
+//    characterBodyIK.leftElbow.transform.position = new Vector3(-bodyParts[13].x,
+//        -bodyParts[13].y, bodyParts[13].z);
+
+//    characterBodyIK.rightElbow.transform.position = new Vector3(-bodyParts[14].x,
+//        -bodyParts[14].y, bodyParts[14].z);
+
+//    characterBodyIK.leftWrist.transform.position = new Vector3(-bodyParts[15].x,
+//        -bodyParts[15].y, bodyParts[15].z);
+
+//    characterBodyIK.rightWrist.transform.position = new Vector3(-bodyParts[16].x,
+//        -bodyParts[16].y, bodyParts[16].z);
+
+//    characterBodyIK.leftHip.transform.position = new Vector3(-bodyParts[23].x,
+//        -bodyParts[23].y, bodyParts[23].z);
+
+//    characterBodyIK.rightHip.transform.position = new Vector3(-bodyParts[24].x,
+//        -bodyParts[24].y, bodyParts[24].z);
+
+//    characterBodyIK.hips.transform.position = (characterBodyIK.rightHip.transform.position +
+//                                             characterBodyIK.leftHip.transform.position +
+//                                             characterBodyIK.leftShoulder.transform.position +
+//                                             characterBodyIK.rightShoulder.transform.position) / 4;
+
+
+//    characterBodyIK.leftKnee.transform.position = new Vector3(-bodyParts[25].x,
+//        -bodyParts[25].y, bodyParts[25].z);
+
+//    characterBodyIK.rightKnee.transform.position = new Vector3(-bodyParts[26].x,
+//        -bodyParts[26].y, bodyParts[26].z);
+
+//    characterBodyIK.leftHeel.transform.position = new Vector3(-bodyParts[27].x,
+//        -bodyParts[27].y, bodyParts[27].z);
+
+//    characterBodyIK.rightHeel.transform.position = new Vector3(-bodyParts[28].x,
+//        -bodyParts[28].y, bodyParts[28].z);
+
+//    characterBodyIK.leftAnkle.transform.position = new Vector3(-bodyParts[27].x,
+//        -bodyParts[27].y, bodyParts[27].z);
+
+//    characterBodyIK.rightAnkle.transform.position = new Vector3(-bodyParts[28].x,
+//        -bodyParts[28].y, bodyParts[28].z);
+
+//}
+
+//public override void Predict3DPose(PoseJsonVector poseJsonVector)
+//{
+//    BodyPartVector[] bodyPartVectors = poseJsonVector.predictions;
+//    if (bodyPartVectors == null)
+//        return;
+//    if (bodyPartVectors.Length == 0)
+//        return;
+
+//    if (debugMode)
+//    {
+//        for (int i = 0; i < bodyPartVectors.Length; i++)
+//        {
+//            jointsDebug[i].transform.position = bodyPartVectors[i].position;
+//        }
+//    }
+//    try
+//    {
+//        character.transform.rotation = Quaternion.identity;
+
+//        if (normalMode)
+//        {
+//            UpdateNormalMode(bodyPartVectors);
+//        }
+//        else if (IKEnable)
+//        {
+//            //UpdateModeIK(bodyPartVectors);
+//        }
+
+//        //character.transform.rotation = characterPlacement.rotation;
+//        hips.position = characterPlacement.position;
+
+//    }
+//    catch (Exception e)
+//    {
+//        //Debug.LogError("Pose problem");
+//        //throw e;
+//    }
+//}

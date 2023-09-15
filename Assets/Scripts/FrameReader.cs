@@ -12,6 +12,8 @@ using UnityEngine.Video;
 public class FrameReader : MonoBehaviour
 {
 
+    public CliffConfiguration CliffConfiguration;
+
     #region Variables
 
     [Header("Requirements")]
@@ -302,19 +304,9 @@ public class FrameReader : MonoBehaviour
     {
         //Json Read
 
-        // JSON dosya yolunu belirleyin (Assets klasörüne göre)
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity.json");
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_hardest.json");
 
 
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/main_demo_data_unity.json");
-
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_quat_wangxi.json");
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_rota_wangxi.json");
-
-
-        string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_quat_TPoseVideo.json");
-        //string filePath = Path.Combine(Application.dataPath, "_Cliff/DataStore/demo_data_unity_rota_TPoseVideo.json");
+        string filePath = Path.Combine(Application.dataPath, CliffConfiguration.filePath);
 
         if (File.Exists(filePath))
         {
@@ -374,7 +366,7 @@ public class FrameReader : MonoBehaviour
             currentCliffAnimationIndex++;
 
             pose3DMapper.PredictCliff3DPose(currentCliffFrameData);
-            //handPose.PredictCliff3DPose(currentCliffFrameData);
+            handPose.PredictCliff3DPose(currentCliffFrameData);
 
         }
 

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -41,6 +39,10 @@ public class HandsPreprocessor : CharacterMapper
     private GameObject[] LHandJointsDebug;
 
 
+    private JointPoint[] handPoints;
+
+    public CliffConfiguration CliffConfiguration;
+
 
     [Header("Anomaly Detection")]
     [SerializeField] private bool enableAnomalyDetector;
@@ -55,6 +57,18 @@ public class HandsPreprocessor : CharacterMapper
 
     protected override void InitializationHumanoidPose()
     {
+
+        handPoints = new JointPoint[56];
+
+        for (var i = 0; i < handPoints.Length; i++)
+        {
+            handPoints[i] = new JointPoint();
+        }
+
+        InitializeHand();
+
+        return;
+
         InitializeRightHand();
         InitializeLeftHand();
 
@@ -82,10 +96,12 @@ public class HandsPreprocessor : CharacterMapper
             HandPoints.MiddleFingerFirst,
             HandPoints.RingFingerFirst,
         };
+
         InitializeRootFingers(rightHand, rightRootFingers);
         InitializeRootFingers(leftHand, leftRootFingers);
-        SetupInverseAndDistance(rightHand);
-        SetupInverseAndDistance(leftHand);
+
+        //SetupInverseAndDistance(rightHand);
+        //SetupInverseAndDistance(leftHand);
 
     }
 
@@ -474,107 +490,6 @@ public class HandsPreprocessor : CharacterMapper
         lastFrameLHandDirection = Vector3.zero;
     }
 
-    private void SetupInverseAndDistance(JointPoint[] jointPoints)
-    {
-        for (int i = 0; i < jointPoints.Length; i++)
-        {
-            if (jointPoints[i].Child != null)
-            {
-                if (jointPoints[i].Child.Transform != null)
-                {
-                    jointPoints[i].DistanceFromChild = Vector3.Distance(jointPoints[i].Child.Transform.position,
-                        jointPoints[i].Transform.position);
-                }
-            }
-
-            if (jointPoints[i].Transform != null)
-            {
-                jointPoints[i].InitialRotation = jointPoints[i].Transform.eulerAngles;
-            }
-        }
-
-
-
-
-        for (int i = 0; i < rootHandPoints.Length; i++)
-        {
-            jointPoints[(int)rootHandPoints[i]].DistanceFromDad = Vector3.Distance(jointPoints[(int)HandPoints.Wrist].Transform.position,
-                    jointPoints[(int)rootHandPoints[i]].Transform.position);
-        }
-
-        // Set Inverse
-        Vector3 indexFingerFirst = jointPoints[(int)HandPoints.IndexFingerFirst].Transform.position;
-        Vector3 b = jointPoints[(int)HandPoints.Wrist].Transform.position;
-        Vector3 pinkyFirst = jointPoints[(int)HandPoints.PinkyFirst].Transform.position;
-        // var forward = b.TriangleNormal(pinkyFirst,indexFingerFirst);
-        var forward = b.TriangleNormal(indexFingerFirst, pinkyFirst);
-
-
-
-        // Vector3 a = anim.GetBoneTransform(HumanBodyBones.LeftUpperLeg).position;
-        // Vector3 b = anim.GetBoneTransform(HumanBodyBones.Hips).position;
-        // Vector3 c = anim.GetBoneTransform(HumanBodyBones.RightUpperLeg).position;
-        // var forward = b.TriangleNormal(a,c);
-        foreach (var jointPoint in jointPoints)
-        {
-            if (jointPoint.Transform != null)
-            {
-                jointPoint.InitRotation = jointPoint.Transform.rotation;
-            }
-
-            if (jointPoint.Child != null)
-            {
-                if (jointPoint.Child.Transform != null)
-                {
-                    //Method1
-                    // jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, forward));
-
-                    //Method2
-                    // jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, b-jointPoint.Transform.position));
-
-                    //Method3
-
-                    Vector3 f = forward;
-                    // if (jointPoint.Parent.Transform != null)
-                    //     f = jointPoint.Child.Transform.forward;
-
-                    jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, f));
-
-                    jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
-
-                    //Method4
-                    // if (jointPoint.Parent != null)
-                    // {
-                    //     jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, jointPoint.Parent.Transform.position-jointPoint.Transform.position));
-                    //     jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
-                    // }
-                    // else
-                    // {
-                    //     jointPoint.Inverse = Quaternion.Inverse(Quaternion.LookRotation(jointPoint.Transform.position - jointPoint.Child.Transform.position, b-jointPoint.Transform.position));
-                    //     jointPoint.InverseRotation = jointPoint.Inverse * jointPoint.InitRotation;
-                    // }
-
-                }
-            }
-            else if (jointPoint.Parent != null)
-            {
-                jointPoint.Child.Inverse = jointPoint.Parent.Inverse;
-                jointPoint.Child.InverseRotation = jointPoint.Parent.InverseRotation;
-            }
-        }
-
-        //set inverse rotation wrist
-        var wrist = jointPoints[(int)HandPoints.Wrist];
-        wrist.InitRotation = wrist.Transform.rotation;
-        var rf = wrist.Transform.position.TriangleNormal(indexFingerFirst,
-            pinkyFirst);
-        wrist.Inverse = Quaternion.Inverse(Quaternion.LookRotation(-wrist.Transform.position + (indexFingerFirst + pinkyFirst) / 2.0f, rf));
-        wrist.InverseRotation = wrist.Inverse * wrist.InitRotation;
-
-    }
-
-
-
     private void InitializeRootFingers(JointPoint[] bones, JointPoint[] rootFingers)
     {
         rootFingers[0] = new JointPoint()
@@ -603,6 +518,248 @@ public class HandsPreprocessor : CharacterMapper
         }
     }
 
+    private void InitializeHand()
+    {
+        //handPoints = new JointPoint[56];
+
+        #region Right Hand
+
+        //////RightThumbProximal
+
+        handPoints[(int)HumanBodyBones.RightThumbProximal].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbProximal);
+        handPoints[(int)HumanBodyBones.RightThumbProximal].DefaultRotation = handPoints[(int)HumanBodyBones.RightThumbProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightThumbProximal].InitRotation = handPoints[(int)HumanBodyBones.RightThumbProximal].Transform.rotation;
+
+        //////RightThumbIntermediate
+
+        handPoints[(int)HumanBodyBones.RightThumbIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
+        handPoints[(int)HumanBodyBones.RightThumbIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.RightThumbIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightThumbIntermediate].InitRotation = handPoints[(int)HumanBodyBones.RightThumbIntermediate].Transform.rotation;
+
+        //////RightThumbIntermediate
+
+        handPoints[(int)HumanBodyBones.RightThumbDistal].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbDistal);
+        handPoints[(int)HumanBodyBones.RightThumbDistal].DefaultRotation = handPoints[(int)HumanBodyBones.RightThumbDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightThumbDistal].InitRotation = handPoints[(int)HumanBodyBones.RightThumbDistal].Transform.rotation;
+
+
+
+
+
+        //////RightIndexProximal
+
+        handPoints[(int)HumanBodyBones.RightIndexProximal].Transform = anim.GetBoneTransform(HumanBodyBones.RightIndexProximal);
+        handPoints[(int)HumanBodyBones.RightIndexProximal].DefaultRotation = handPoints[(int)HumanBodyBones.RightIndexProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightIndexProximal].InitRotation = handPoints[(int)HumanBodyBones.RightIndexProximal].Transform.rotation;
+
+        //////RightIndexIntermediate
+
+        handPoints[(int)HumanBodyBones.RightIndexIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.RightIndexIntermediate);
+        handPoints[(int)HumanBodyBones.RightIndexIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.RightIndexIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightIndexIntermediate].InitRotation = handPoints[(int)HumanBodyBones.RightIndexIntermediate].Transform.rotation;
+
+        //////RightIndexDistal
+
+        handPoints[(int)HumanBodyBones.RightIndexDistal].Transform = anim.GetBoneTransform(HumanBodyBones.RightIndexDistal);
+        handPoints[(int)HumanBodyBones.RightIndexDistal].DefaultRotation = handPoints[(int)HumanBodyBones.RightIndexDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightIndexDistal].InitRotation = handPoints[(int)HumanBodyBones.RightIndexDistal].Transform.rotation;
+
+
+
+
+
+
+
+        //////RightMiddleProximal
+
+        handPoints[(int)HumanBodyBones.RightMiddleProximal].Transform = anim.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+        handPoints[(int)HumanBodyBones.RightMiddleProximal].DefaultRotation = handPoints[(int)HumanBodyBones.RightMiddleProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightMiddleProximal].InitRotation = handPoints[(int)HumanBodyBones.RightMiddleProximal].Transform.rotation;
+
+        //////RightMiddleIntermediate
+
+        handPoints[(int)HumanBodyBones.RightMiddleIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
+        handPoints[(int)HumanBodyBones.RightMiddleIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.RightMiddleIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightMiddleIntermediate].InitRotation = handPoints[(int)HumanBodyBones.RightMiddleIntermediate].Transform.rotation;
+
+        //////RightMiddleDistal
+
+        handPoints[(int)HumanBodyBones.RightMiddleDistal].Transform = anim.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+        handPoints[(int)HumanBodyBones.RightMiddleDistal].DefaultRotation = handPoints[(int)HumanBodyBones.RightMiddleDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightMiddleDistal].InitRotation = handPoints[(int)HumanBodyBones.RightMiddleDistal].Transform.rotation;
+
+
+
+
+
+
+
+        //////RightRingProximal
+
+        handPoints[(int)HumanBodyBones.RightRingProximal].Transform = anim.GetBoneTransform(HumanBodyBones.RightRingProximal);
+        handPoints[(int)HumanBodyBones.RightRingProximal].DefaultRotation = handPoints[(int)HumanBodyBones.RightRingProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightRingProximal].InitRotation = handPoints[(int)HumanBodyBones.RightRingProximal].Transform.rotation;
+
+        //////RightRingIntermediate
+
+        handPoints[(int)HumanBodyBones.RightRingIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.RightRingIntermediate);
+        handPoints[(int)HumanBodyBones.RightRingIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.RightRingIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightRingIntermediate].InitRotation = handPoints[(int)HumanBodyBones.RightRingIntermediate].Transform.rotation;
+
+        //////RightRingDistal
+
+        handPoints[(int)HumanBodyBones.RightRingDistal].Transform = anim.GetBoneTransform(HumanBodyBones.RightRingDistal);
+        handPoints[(int)HumanBodyBones.RightRingDistal].DefaultRotation = handPoints[(int)HumanBodyBones.RightRingDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightRingDistal].InitRotation = handPoints[(int)HumanBodyBones.RightRingDistal].Transform.rotation;
+
+
+
+
+
+
+
+
+        //////RightLittleProximal
+
+        handPoints[(int)HumanBodyBones.RightLittleProximal].Transform = anim.GetBoneTransform(HumanBodyBones.RightLittleProximal);
+        handPoints[(int)HumanBodyBones.RightLittleProximal].DefaultRotation = handPoints[(int)HumanBodyBones.RightLittleProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightLittleProximal].InitRotation = handPoints[(int)HumanBodyBones.RightLittleProximal].Transform.rotation;
+
+        //////RightLittleIntermediate
+
+        handPoints[(int)HumanBodyBones.RightLittleIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.RightLittleIntermediate);
+        handPoints[(int)HumanBodyBones.RightLittleIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.RightLittleIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightLittleIntermediate].InitRotation = handPoints[(int)HumanBodyBones.RightLittleIntermediate].Transform.rotation;
+
+        //////RightLittleDistal
+
+        handPoints[(int)HumanBodyBones.RightLittleDistal].Transform = anim.GetBoneTransform(HumanBodyBones.RightLittleDistal);
+        handPoints[(int)HumanBodyBones.RightLittleDistal].DefaultRotation = handPoints[(int)HumanBodyBones.RightLittleDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.RightLittleDistal].InitRotation = handPoints[(int)HumanBodyBones.RightLittleDistal].Transform.rotation;
+
+        #endregion
+
+
+
+        #region Left Hand
+
+        //////RightThumbProximal
+
+        handPoints[(int)HumanBodyBones.LeftThumbProximal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftThumbProximal);
+        handPoints[(int)HumanBodyBones.LeftThumbProximal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftThumbProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftThumbProximal].InitRotation = handPoints[(int)HumanBodyBones.LeftThumbProximal].Transform.rotation;
+
+        //////LeftThumbIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftThumbIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate);
+        handPoints[(int)HumanBodyBones.LeftThumbIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.LeftThumbIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftThumbIntermediate].InitRotation = handPoints[(int)HumanBodyBones.LeftThumbIntermediate].Transform.rotation;
+
+        //////LeftThumbIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftThumbDistal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftThumbDistal);
+        handPoints[(int)HumanBodyBones.LeftThumbDistal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftThumbDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftThumbDistal].InitRotation = handPoints[(int)HumanBodyBones.LeftThumbDistal].Transform.rotation;
+
+
+
+
+
+        //////LeftIndexProximal
+
+        handPoints[(int)HumanBodyBones.LeftIndexProximal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftIndexProximal);
+        handPoints[(int)HumanBodyBones.LeftIndexProximal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftIndexProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftIndexProximal].InitRotation = handPoints[(int)HumanBodyBones.LeftIndexProximal].Transform.rotation;
+
+        //////LeftIndexIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftIndexIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate);
+        handPoints[(int)HumanBodyBones.LeftIndexIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.LeftIndexIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftIndexIntermediate].InitRotation = handPoints[(int)HumanBodyBones.LeftIndexIntermediate].Transform.rotation;
+
+        //////LeftIndexDistal
+
+        handPoints[(int)HumanBodyBones.LeftIndexDistal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftIndexDistal);
+        handPoints[(int)HumanBodyBones.LeftIndexDistal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftIndexDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftIndexDistal].InitRotation = handPoints[(int)HumanBodyBones.LeftIndexDistal].Transform.rotation;
+
+
+
+
+
+
+
+        //////LeftMiddleProximal
+
+        handPoints[(int)HumanBodyBones.LeftMiddleProximal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+        handPoints[(int)HumanBodyBones.LeftMiddleProximal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftMiddleProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftMiddleProximal].InitRotation = handPoints[(int)HumanBodyBones.LeftMiddleProximal].Transform.rotation;
+
+        //////LeftMiddleIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftMiddleIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
+        handPoints[(int)HumanBodyBones.LeftMiddleIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.LeftMiddleIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftMiddleIntermediate].InitRotation = handPoints[(int)HumanBodyBones.LeftMiddleIntermediate].Transform.rotation;
+
+        //////LeftMiddleDistal
+
+        handPoints[(int)HumanBodyBones.LeftMiddleDistal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
+        handPoints[(int)HumanBodyBones.LeftMiddleDistal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftMiddleDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftMiddleDistal].InitRotation = handPoints[(int)HumanBodyBones.LeftMiddleDistal].Transform.rotation;
+
+
+
+
+
+
+
+        //////LeftRingProximal
+
+        handPoints[(int)HumanBodyBones.LeftRingProximal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftRingProximal);
+        handPoints[(int)HumanBodyBones.LeftRingProximal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftRingProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftRingProximal].InitRotation = handPoints[(int)HumanBodyBones.LeftRingProximal].Transform.rotation;
+
+        //////LeftRingIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftRingIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.LeftRingIntermediate);
+        handPoints[(int)HumanBodyBones.LeftRingIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.LeftRingIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftRingIntermediate].InitRotation = handPoints[(int)HumanBodyBones.LeftRingIntermediate].Transform.rotation;
+
+        //////LeftRingDistal
+
+        handPoints[(int)HumanBodyBones.LeftRingDistal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftRingDistal);
+        handPoints[(int)HumanBodyBones.LeftRingDistal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftRingDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftRingDistal].InitRotation = handPoints[(int)HumanBodyBones.LeftRingDistal].Transform.rotation;
+
+
+
+
+
+
+
+
+        //////LeftLittleProximal
+
+        handPoints[(int)HumanBodyBones.LeftLittleProximal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLittleProximal);
+        handPoints[(int)HumanBodyBones.LeftLittleProximal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftLittleProximal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftLittleProximal].InitRotation = handPoints[(int)HumanBodyBones.LeftLittleProximal].Transform.rotation;
+
+        //////LeftLittleIntermediate
+
+        handPoints[(int)HumanBodyBones.LeftLittleIntermediate].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate);
+        handPoints[(int)HumanBodyBones.LeftLittleIntermediate].DefaultRotation = handPoints[(int)HumanBodyBones.LeftLittleIntermediate].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftLittleIntermediate].InitRotation = handPoints[(int)HumanBodyBones.LeftLittleIntermediate].Transform.rotation;
+
+        //////LeftLittleDistal
+
+        handPoints[(int)HumanBodyBones.LeftLittleDistal].Transform = anim.GetBoneTransform(HumanBodyBones.LeftLittleDistal);
+        handPoints[(int)HumanBodyBones.LeftLittleDistal].DefaultRotation = handPoints[(int)HumanBodyBones.LeftLittleDistal].Transform.localEulerAngles;
+        handPoints[(int)HumanBodyBones.LeftLittleDistal].InitRotation = handPoints[(int)HumanBodyBones.LeftLittleDistal].Transform.rotation;
+
+        #endregion
+
+    }
+
     private void InitializeRightHand()
     {
         // Right Hand
@@ -622,6 +779,7 @@ public class HandsPreprocessor : CharacterMapper
         rightHand[(int)HandPoints.ThumbFirst].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbProximal);
         rightHand[(int)HandPoints.ThumbSecond].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
         rightHand[(int)HandPoints.ThumbThird].Transform = anim.GetBoneTransform(HumanBodyBones.RightThumbDistal);
+
         //child and parent
         rightHand[(int)HandPoints.ThumbFirst].Child = rightHand[(int)HandPoints.ThumbSecond];
         rightHand[(int)HandPoints.ThumbSecond].Child = rightHand[(int)HandPoints.ThumbThird];
@@ -680,6 +838,12 @@ public class HandsPreprocessor : CharacterMapper
 
     private void InitializeLeftHand()
     {
+
+
+
+
+
+
         // Right Hand
         leftHand = new JointPoint[21];
 
@@ -760,140 +924,307 @@ public class HandsPreprocessor : CharacterMapper
     public void PredictCliff3DPose(CliffFrame cliffFrame)
     {
 
-        #region Left Hand
+        bool isNew = false;
+        bool isQuaternation = false;
 
-        // Left Hand
-        var leftHandWrist = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
-        leftHand[(int)HandPoints.Wrist].Transform.localRotation = CalculateRotation(leftHandWrist);
+        bool isGlobal = CliffConfiguration.isGlobal;
+        bool applyDifference = CliffConfiguration.applyDifference;
 
+        #region MyRegion
+        // demo_data_unity_quat_TPoseVideo Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible
 
+        // demo_data_unity_rota_TPoseVideo Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible
 
-        // Left Index Fingers 
-        var leftHandIndex1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandIndex1];
-        leftHand[(int)HandPoints.IndexFingerFirst].Transform.localRotation = CalculateRotation(leftHandIndex1);
-
-        var leftHandIndex2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
-        leftHand[(int)HandPoints.IndexFingerSecond].Transform.localRotation = CalculateRotation(leftHandIndex2);
-
-        var leftHandIndex3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHand];
-        leftHand[(int)HandPoints.IndexFingerThird].Transform.localRotation = CalculateRotation(leftHandIndex3);
-
-
-        // Left Middle Fingers 
-        var leftHandMiddle1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle1];
-        leftHand[(int)HandPoints.MiddleFingerFirst].Transform.localRotation = CalculateRotation(leftHandMiddle1);
-
-        var leftHandMiddle2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle2];
-        leftHand[(int)HandPoints.MiddleFingerSecond].Transform.localRotation = CalculateRotation(leftHandMiddle2);
-
-        var leftHandMiddle3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle3];
-        leftHand[(int)HandPoints.MiddleFingerThird].Transform.localRotation = CalculateRotation(leftHandIndex3);
-
-
-
-        // Left Pinky 
-        var leftHandPinky1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky1];
-        leftHand[(int)HandPoints.PinkyFirst].Transform.localRotation = CalculateRotation(leftHandPinky1);
-
-        var leftHandPinky2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky2];
-        leftHand[(int)HandPoints.PinkySecond].Transform.localRotation = CalculateRotation(leftHandPinky2);
-
-        var leftHandPinky3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky3];
-        leftHand[(int)HandPoints.PinkyThird].Transform.localRotation = CalculateRotation(leftHandPinky3);
-
-
-
-        // Left Ring 
-        var leftHandRing1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing1];
-        leftHand[(int)HandPoints.RingFingerFirst].Transform.localRotation = CalculateRotation(leftHandRing1);
-
-        var leftHandRing2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing2];
-        leftHand[(int)HandPoints.RingFingerSecond].Transform.localRotation = CalculateRotation(leftHandRing2);
-
-        var leftHandRing3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing3];
-        leftHand[(int)HandPoints.RingFingerThird].Transform.localRotation = CalculateRotation(leftHandRing3);
-
-
-
-        // Left Thumb
-        var leftHandThumb1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb1];
-        leftHand[(int)HandPoints.ThumbFirst].Transform.localRotation = CalculateRotation(leftHandThumb1);
-
-        var leftHandThumb2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb2];
-        leftHand[(int)HandPoints.ThumbSecond].Transform.localRotation = CalculateRotation(leftHandThumb2);
-
-        var leftHandThumb3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb3];
-        leftHand[(int)HandPoints.ThumbThird].Transform.localRotation = CalculateRotation(leftHandThumb3);
-
+        // demo_data_unity_quat_wangxi Test
+        // 1 good
+        // 4 bad
+        // 2 3 terrible 
         #endregion
+
+        switch ((int)CliffConfiguration.CliffStatee)
+        {
+            case 1:
+                isNew = true;
+                isQuaternation = false;
+                break;
+
+            case 2:
+                isNew = true;
+                isQuaternation = true;
+                break;
+
+            case 3:
+                isNew = false;
+                isQuaternation = true;
+                break;
+
+            case 4:
+                isNew = false;
+                isQuaternation = false;
+                break;
+
+            default:
+                break;
+        }
+
+
 
         #region Right Hand
 
-        // Right Hand
-
-        var rightHandWrist = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHand];
-        rightHand[(int)HandPoints.Wrist].Transform.localRotation = CalculateRotation(rightHandWrist);
 
 
-        // Right Index Fingers 
-        var rightHandIndex1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex1];
-        rightHand[(int)HandPoints.IndexFingerFirst].Transform.localRotation = CalculateRotation(rightHandIndex1);
-
-        var rightHandIndex2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex2];
-        rightHand[(int)HandPoints.IndexFingerSecond].Transform.localRotation = CalculateRotation(rightHandIndex2);
-
-        var rightHandIndex3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex3];
-        rightHand[(int)HandPoints.IndexFingerThird].Transform.localRotation = CalculateRotation(rightHandIndex3);
+        // RightThumbProximal
+        var RightThumbProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightThumbProximal], RightThumbProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
 
-        // Right Middle Fingers 
-        var rightHandMiddle1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle1];
-        rightHand[(int)HandPoints.MiddleFingerFirst].Transform.localRotation = CalculateRotation(rightHandMiddle1);
+        // RightThumbProximal
+        var RightThumbIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightThumbIntermediate], RightThumbIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
-        var rightHandMiddle2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle2];
-        rightHand[(int)HandPoints.MiddleFingerSecond].Transform.localRotation = CalculateRotation(rightHandMiddle2);
 
-        var rightHandMiddle3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle3];
-        rightHand[(int)HandPoints.MiddleFingerThird].Transform.localRotation = CalculateRotation(rightHandMiddle3);
+        // RightThumbProximal
+        var RightThumbDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightThumbDistal], RightThumbDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
 
 
-        // Right Pinky 
-        var rightHandPinky1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky1];
-        rightHand[(int)HandPoints.PinkyFirst].Transform.localRotation = CalculateRotation(rightHandPinky1);
-
-        var rightHandPinky2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky2];
-        rightHand[(int)HandPoints.PinkySecond].Transform.localRotation = CalculateRotation(rightHandPinky2);
-
-        var rightHandPinky3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky3];
-        rightHand[(int)HandPoints.PinkyThird].Transform.localRotation = CalculateRotation(rightHandPinky3);
 
 
 
-        // Right Ring 
-        var rightHandRing1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing1];
-        rightHand[(int)HandPoints.RingFingerFirst].Transform.localRotation = CalculateRotation(rightHandRing1);
-
-        var rightHandRing2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing2];
-        rightHand[(int)HandPoints.RingFingerSecond].Transform.localRotation = CalculateRotation(rightHandRing2);
-
-        var rightHandRing3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing3];
-        rightHand[(int)HandPoints.RingFingerThird].Transform.localRotation = CalculateRotation(rightHandRing3);
 
 
+        // RightIndexProximal
+        var RightIndexProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightIndexProximal], RightIndexProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
-        // Right Thumb
-        var rightHandThumb1 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb1];
-        rightHand[(int)HandPoints.ThumbFirst].Transform.localRotation = CalculateRotation(rightHandThumb1);
 
-        var rightHandThumb2 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb2];
-        rightHand[(int)HandPoints.ThumbSecond].Transform.localRotation = CalculateRotation(rightHandThumb2);
+        // RightIndexIntermediate
+        var RightIndexIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightIndexIntermediate], RightIndexIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
 
-        var rightHandThumb3 = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandThumb3];
-        rightHand[(int)HandPoints.ThumbThird].Transform.localRotation = CalculateRotation(rightHandThumb3);
+
+        // RightIndexDistal
+        var RightIndexDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandIndex3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightIndexDistal], RightIndexDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // RightMiddleProximal
+        var RightMiddleProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightMiddleProximal], RightMiddleProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightMiddleIntermediate
+        var RightMiddleIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightMiddleIntermediate], RightMiddleIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightMiddleDistal
+        var RightMiddleDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandMiddle3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightMiddleDistal], RightMiddleDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // RightRingProximal
+        var RightRingProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightRingProximal], RightRingProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightRingIntermediate
+        var RightRingIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightRingIntermediate], RightRingIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightRingDistal
+        var RightRingDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandRing3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightRingDistal], RightRingDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // RightLittleProximal
+        var RightLittleProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightLittleProximal], RightLittleProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightLittleIntermediate
+        var RightLittleIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightLittleIntermediate], RightLittleIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // RightLittleDistal
+        var RightLittleDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.RightHandPinky3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.RightLittleDistal], RightLittleDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
 
 
         #endregion
+
+
+
+
+        #region Left Hand
+
+
+
+        // LeftThumbProximal
+        var LeftThumbProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftThumbProximal], LeftThumbProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftThumbProximal
+        var LeftThumbIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftThumbIntermediate], LeftThumbIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftThumbProximal
+        var LeftThumbDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandThumb3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftThumbDistal], LeftThumbDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+        // LeftIndexProximal
+        var LeftIndexProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandIndex1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftIndexProximal], LeftIndexProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftIndexIntermediate
+        var LeftIndexIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandIndex2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftIndexIntermediate], LeftIndexIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftIndexDistal
+        var LeftIndexDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandIndex3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftIndexDistal], LeftIndexDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // LeftMiddleProximal
+        var LeftMiddleProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftMiddleProximal], LeftMiddleProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftMiddleIntermediate
+        var LeftMiddleIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftMiddleIntermediate], LeftMiddleIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftMiddleDistal
+        var LeftMiddleDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandMiddle3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftMiddleDistal], LeftMiddleDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // LeftRingProximal
+        var LeftRingProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftRingProximal], LeftRingProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftRingIntermediate
+        var LeftRingIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftRingIntermediate], LeftRingIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftRingDistal
+        var LeftRingDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandRing3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftRingDistal], LeftRingDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // LeftLittleProximal
+        var LeftLittleProximal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky1];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftLittleProximal], LeftLittleProximal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftLittleIntermediate
+        var LeftLittleIntermediate = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky2];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftLittleIntermediate], LeftLittleIntermediate, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+        // LeftLittleDistal
+        var LeftLittleDistal = cliffFrame.BodyPartRotations[(int)BodyPartsOfCliff.LeftHandPinky3];
+        CalculateRotation(handPoints[(int)HumanBodyBones.LeftLittleDistal], LeftLittleDistal, applyDifference, new Vector3(0, 0, 0), isQuaternation, isNew, isGlobal);
+
+
+
+        #endregion
+
+
 
     }
 
@@ -911,6 +1242,78 @@ public class HandsPreprocessor : CharacterMapper
     {
 
     }
+
+    private void CalculateRotation(JointPoint jointPoint, CliffBodyPart cliffBodyPart, bool applyDifference, Vector3 additionalRotation, bool IsQuaternation, bool isNew, bool isGlobal)
+    {
+        float x, y, z, w;
+
+        if (isNew)
+        {
+            w = cliffBodyPart.x;
+            x = cliffBodyPart.y;
+            y = cliffBodyPart.z;
+            z = cliffBodyPart.w;
+        }
+        else
+        {
+            x = cliffBodyPart.x;
+            y = cliffBodyPart.y;
+            z = cliffBodyPart.z;
+            w = cliffBodyPart.w;
+        }
+
+        Debug.Log($"Angleeee x:{x},y:{y},z:{z}");
+
+        var defaultRotation = jointPoint.DefaultRotation;
+        var InitialRotation = jointPoint.InitRotation;
+        var rigTransform = jointPoint.Transform;
+
+        Vector3 eulerAngles = additionalRotation;
+
+        var quaternion = new Quaternion(x, y, z, w);
+
+        if (IsQuaternation)
+        {
+            if (isGlobal)
+            {
+                if (applyDifference)
+                {
+                    quaternion *= InitialRotation;
+                    rigTransform.rotation = quaternion;
+                }
+                else
+                {
+                    rigTransform.rotation = quaternion;
+                }
+            }
+            else
+            {
+                rigTransform.localRotation = quaternion;
+            }
+
+            return;
+        }
+
+        if (applyDifference)
+        {
+            eulerAngles += new Vector3(x * Mathf.Rad2Deg - defaultRotation.x, y * Mathf.Rad2Deg - defaultRotation.y, z * Mathf.Rad2Deg - defaultRotation.z);
+        }
+        else
+        {
+            eulerAngles += new Vector3(x * Mathf.Rad2Deg, y * Mathf.Rad2Deg, z * Mathf.Rad2Deg);
+        }
+
+        if (isGlobal)
+        {
+            rigTransform.eulerAngles = eulerAngles;
+        }
+        else
+        {
+            rigTransform.localEulerAngles = eulerAngles;
+        }
+
+    }
+
 
     #endregion
 
